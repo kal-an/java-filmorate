@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.controllers;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exceptions.InvalidFilmException;
 import ru.yandex.practicum.filmorate.exceptions.InvalidUserException;
 import ru.yandex.practicum.filmorate.model.GeneratorId;
 import ru.yandex.practicum.filmorate.model.User;
@@ -23,6 +22,14 @@ public class UserController {
 
     @PostMapping("/users")
     public void create(@RequestBody User user) {
+        if (user.getId() != null) {
+            log.error(user.toString());
+            throw new InvalidUserException("Идентификатор должен быть пустым");
+        }
+        if (!users.containsKey(user.getId())) {
+            log.error(user.toString());
+            throw new InvalidUserException("Идентификатор не корректен");
+        }
         if (user.getEmail() == null || user.getEmail().isBlank()) {
             log.error(user.toString());
             throw new InvalidUserException("Адрес электронной почты не может быть пустым.");
@@ -52,7 +59,7 @@ public class UserController {
     public void update(@RequestBody User user) {
         if (user.getId() == null) {
             log.error(user.toString());
-            throw new InvalidFilmException("Идентификатор не может быть пустым");
+            throw new InvalidUserException("Идентификатор не может быть пустым");
         }
         if (user.getEmail() == null || user.getEmail().isBlank()) {
             log.error(user.toString());

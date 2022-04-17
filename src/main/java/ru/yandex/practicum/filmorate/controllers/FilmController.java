@@ -21,6 +21,10 @@ public class FilmController {
 
     @PostMapping("/films")
     public void create(@RequestBody Film film) {
+        if (film.getId() != null) {
+            log.error(film.toString());
+            throw new InvalidFilmException("Идентификатор должен быть пустым");
+        }
         if (film.getName().isBlank() || film.getName() == null) {
             log.error(film.toString());
             throw new InvalidFilmException("Название фильма не может быть пустым");
@@ -47,6 +51,10 @@ public class FilmController {
         if (film.getId() == null) {
             log.error(film.toString());
             throw new InvalidFilmException("Идентификатор не может быть пустым");
+        }
+        if (!films.containsKey(film.getId())) {
+            log.error(film.toString());
+            throw new InvalidFilmException("Идентификатор не корректен");
         }
         if (film.getName().isBlank() || film.getName() == null) {
             log.error(film.toString());
