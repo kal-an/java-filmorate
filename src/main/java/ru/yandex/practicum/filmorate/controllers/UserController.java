@@ -26,10 +26,6 @@ public class UserController {
             log.error(user.toString());
             throw new InvalidUserException("Идентификатор должен быть пустым");
         }
-        if (!users.containsKey(user.getId())) {
-            log.error(user.toString());
-            throw new InvalidUserException("Идентификатор не корректен");
-        }
         if (user.getEmail() == null || user.getEmail().isBlank()) {
             log.error(user.toString());
             throw new InvalidUserException("Адрес электронной почты не может быть пустым.");
@@ -60,6 +56,10 @@ public class UserController {
         if (user.getId() == null) {
             log.error(user.toString());
             throw new InvalidUserException("Идентификатор не может быть пустым");
+        }
+        if (!users.containsKey(user.getId())) {
+            log.error(user.toString());
+            throw new InvalidUserException("Идентификатор не корректен");
         }
         if (user.getEmail() == null || user.getEmail().isBlank()) {
             log.error(user.toString());
