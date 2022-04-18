@@ -2,13 +2,29 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import javax.validation.constraints.*;
+import java.time.LocalDate;
 
 @Data
 @Builder
 public class User {
     private Integer id;
+    @NotNull(message = "Логин не может быть пустым.")
+    @NotBlank(message = "Логин не может быть пустым.")
+    @Pattern(regexp = "^\\S+$", message = "Логин не может содержать пробелов.")
     private String login;
+    @NotNull
     private String name;
+    @NotNull(message = "Адрес электронной почты не может быть пустым.")
+    @NotBlank(message = "Адрес электронной почты не может быть пустым.")
+    @Email(message = "Адрес электронной почты некорректен.")
+    @Pattern(regexp = "^[aA-zZ]+@[a-z]+\\.[a-z]+$",
+            message = "Адрес электронной почты некорректен.")
     private String email;
-    private String birthday;
+    @NotNull(message = "Дата рождения не может быть пустой.")
+    @Past
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate birthday;
 }
