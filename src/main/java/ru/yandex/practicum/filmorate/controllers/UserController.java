@@ -34,7 +34,7 @@ public class UserController {
             log.error(user.toString());
             throw new InvalidUserException("Адрес электронной почты некорректен.");
         }
-        if (user.getLogin() == null || user.getLogin().contains(" ")) {
+        if (user.getLogin() == null || user.getLogin().isBlank()) {
             log.error(user.toString());
             throw new InvalidUserException("Логин не может быть пустым.");
         }
@@ -69,7 +69,7 @@ public class UserController {
             log.error(user.toString());
             throw new InvalidUserException("Адрес электронной почты некорректен.");
         }
-        if (user.getLogin() == null || user.getLogin().contains(" ")) {
+        if (user.getLogin() == null || user.getLogin().isBlank()) {
             log.error(user.toString());
             throw new InvalidUserException("Логин не может быть пустым.");
         }
