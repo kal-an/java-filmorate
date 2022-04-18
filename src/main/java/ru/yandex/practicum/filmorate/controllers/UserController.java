@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.controllers;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.InvalidUserException;
-import ru.yandex.practicum.filmorate.model.GeneratorId;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
@@ -19,6 +18,7 @@ public class UserController {
     private final Map<Integer, User> users = new HashMap<>();
     public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter
             .ofPattern("yyyy-MM-dd");
+    private static int id;
 
     @PostMapping("/users")
     public void create(@RequestBody User user) {
@@ -46,9 +46,9 @@ public class UserController {
             log.error(user.toString());
             throw new InvalidUserException("Некорректная дата рождения.");
         }
-        user.setId(GeneratorId.getNewId());
+        user.setId(++id);
         log.debug(user.toString());
-        users.put(user.getId(), user);
+        users.put(id, user);
     }
 
     @PutMapping("/users")
