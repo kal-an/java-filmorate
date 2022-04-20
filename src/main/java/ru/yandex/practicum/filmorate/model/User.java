@@ -11,14 +11,12 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode
-public class User {
-    private Integer id;
+@EqualsAndHashCode(callSuper = true)
+public class User extends Entity {
     @NotNull(message = "Логин не может быть пустым.")
     @NotBlank(message = "Логин не может быть пустым.")
     @Pattern(regexp = "^\\S+$", message = "Логин не может содержать пробелов.")
     private String login;
-    @NotNull
     private String name;
     @NotNull(message = "Адрес электронной почты не может быть пустым.")
     @NotBlank(message = "Адрес электронной почты не может быть пустым.")

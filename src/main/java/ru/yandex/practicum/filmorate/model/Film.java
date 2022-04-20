@@ -14,9 +14,8 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode
-public class Film {
-    private Integer id;
+@EqualsAndHashCode(callSuper = true)
+public class Film extends Entity {
     @NotNull(message = "Название фильма не может быть пустым")
     @NotBlank(message = "Название фильма не может быть пустым")
     private String name;
