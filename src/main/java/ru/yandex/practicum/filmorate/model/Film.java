@@ -21,6 +21,7 @@ public class Film extends Entity {
     private String name;
     @Size(max = 200, message = "Описание фильма не может быть длиннее 200 символов")
     @NotNull(message = "Описание фильма не может быть пустым")
+    @NotBlank(message = "Описание фильма не может быть пустым")
     private String description;
     @NotNull(message = "Дата фильма не может быть пустой")
     @DateRelease(message = "Дата должна быть не раньше 28 декабря 1895 года")
