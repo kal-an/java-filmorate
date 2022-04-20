@@ -36,6 +36,8 @@ public class UserController extends EntityController<User> {
     @GetMapping("/users")
     @Override
     public Collection<User> find() {
-        return super.find();
+        Collection<User> userList = super.find();
+        log.debug("Текущее количество пользователей: {}", userList.size());
+        return userList;
     }
 }

@@ -40,7 +40,6 @@ abstract class EntityController<T extends Entity> {
     }
 
     public Collection<T> find() {
-        log.debug("Текущее количество: {}", entities.size());
         return entities.values();
     }
 }

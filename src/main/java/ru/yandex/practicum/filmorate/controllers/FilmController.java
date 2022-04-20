@@ -26,6 +26,8 @@ public class FilmController extends EntityController<Film> {
     @GetMapping("/films")
     @Override
     public Collection<Film> find() {
-        return super.find();
+        Collection<Film> filmList = super.find();
+        log.debug("Текущее количество фильмов: {}", filmList.size());
+        return filmList;
     }
 }
