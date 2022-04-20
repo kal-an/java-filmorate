@@ -32,11 +32,44 @@ class UserValidatorTest {
     }
 
     @Test
-    @DisplayName("Создание пользователя с некорректными данными")
-    public void failCreateUser() {
+    @DisplayName("Создание пользователя с некорректным логином")
+    public void createUserBadLogin() {
         User user = User.builder()
                 .login("dolore ullamco")
+                .name("est adipisicing")
+                .email("mail@mail.ru")
+                .birthday(LocalDate.of(1946, 8, 20))
+                .build();
+        ConstraintViolationException ex = Assertions.assertThrows(
+                ConstraintViolationException.class,
+                () -> validator.isValid(user)
+        );
+        Assertions.assertEquals(ConstraintViolationException.class, ex.getClass());
+    }
+
+    @Test
+    @DisplayName("Создание пользователя с некорректным email")
+    public void createUserBadEmail() {
+        User user = User.builder()
+                .login("dolore")
+                .name("est adipisicing")
                 .email("mail.ru")
+                .birthday(LocalDate.of(1946, 8, 20))
+                .build();
+        ConstraintViolationException ex = Assertions.assertThrows(
+                ConstraintViolationException.class,
+                () -> validator.isValid(user)
+        );
+        Assertions.assertEquals(ConstraintViolationException.class, ex.getClass());
+    }
+
+    @Test
+    @DisplayName("Создание пользователя с некорректным датой рождения")
+    public void createUserBadBirthday() {
+        User user = User.builder()
+                .login("dolore")
+                .name("est adipisicing")
+                .email("mail@mail.ru")
                 .birthday(LocalDate.of(2446, 8, 20))
                 .build();
         ConstraintViolationException ex = Assertions.assertThrows(
