@@ -14,7 +14,6 @@ import java.time.LocalDate;
 @EqualsAndHashCode(callSuper = true)
 public class User extends Entity {
     @NotNull(message = "Логин не может быть пустым.")
-    @NotBlank(message = "Логин не может быть пустым.")
     @Pattern(regexp = "^\\S+$", message = "Логин не может содержать пробелов.")
     private String login;
     private String name;
