@@ -20,7 +20,6 @@ public class User extends Entity {
     private String name;
     @NotNull(message = "Адрес электронной почты не может быть пустым.")
     @NotBlank(message = "Адрес электронной почты не может быть пустым.")
-    @Email(message = "Адрес электронной почты некорректен.")
     @Pattern(regexp = "^[aA-zZ]+@[a-z]+\\.[a-z]+$",
             message = "Адрес электронной почты некорректен.")
     private String email;
