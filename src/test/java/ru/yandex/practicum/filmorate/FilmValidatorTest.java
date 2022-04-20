@@ -167,14 +167,15 @@ class FilmValidatorTest {
                 ValidationException.class,
                 () -> validator.isValid(film)
         );
-        Assertions.assertEquals(ValidationException.class, ex.getClass());
+        Assertions.assertEquals("HV000028: Unexpected exception during isValid call.",
+                ex.getMessage());
     }
 
     @Test
     @DisplayName("Фильм с отрицательной продолжительностью")
     public void createFilmNegativeDuration() {
         Film film = Film.builder()
-                .name("")
+                .name("nisi eiusmod")
                 .description("adipisicing")
                 .releaseDate(LocalDate.of(2007, 3, 25))
                 .duration(-100)
@@ -183,7 +184,8 @@ class FilmValidatorTest {
                 ConstraintViolationException.class,
                 () -> validator.isValid(film)
         );
-        Assertions.assertEquals(ConstraintViolationException.class, ex.getClass());
+        Assertions.assertEquals("duration: Продолжительность фильма не может быть меньше 0",
+                ex.getMessage());
     }
 
     @Test
@@ -199,7 +201,8 @@ class FilmValidatorTest {
                 ConstraintViolationException.class,
                 () -> validator.isValid(film)
         );
-        Assertions.assertEquals(ConstraintViolationException.class, ex.getClass());
+        Assertions.assertEquals("duration: Продолжительность фильма не может быть меньше 0",
+                ex.getMessage());
     }
 
     @Test
