@@ -99,7 +99,8 @@ class UserValidatorTest {
                 ConstraintViolationException.class,
                 () -> validator.isValid(user)
         );
-        Assertions.assertEquals("login: Логин не может быть пустым.", ex.getMessage());
+        Assertions.assertEquals("email: Адрес электронной почты некорректен.",
+                ex.getMessage());
     }
 
     @Test
