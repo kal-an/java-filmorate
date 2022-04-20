@@ -6,10 +6,10 @@ import java.time.LocalDate;
 
 public class DateReleaseValidator implements ConstraintValidator<DateRelease, LocalDate> {
 
-    private static final LocalDate DATE_LIMIT = LocalDate.of(1985, 12, 28);
+    private static final LocalDate DATE_LIMIT = LocalDate.of(1895, 12, 28);
 
     @Override
     public boolean isValid(LocalDate localDate, ConstraintValidatorContext context) {
-        return !localDate.isBefore(DATE_LIMIT);
+        return localDate.isAfter(DATE_LIMIT) || localDate.isEqual(DATE_LIMIT);
     }
 }
