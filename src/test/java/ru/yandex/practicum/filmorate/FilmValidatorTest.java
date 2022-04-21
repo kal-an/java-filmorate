@@ -207,7 +207,7 @@ class FilmValidatorTest {
 
     @Test
     @DisplayName("Фильм с большой продолжительностью")
-    public void createFilmDuration() {
+    public void createFilmBigDuration() {
         Film film = Film.builder()
                 .name("nisi eiusmod")
                 .description("adipisicing")
