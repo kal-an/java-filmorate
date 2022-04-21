@@ -11,7 +11,7 @@ import java.time.LocalDate;
 class FilmValidatorTest {
 
     private static ValidatorService validator;
-    public static Film film;
+    private static Film film;
 
     @BeforeAll
     public static void setUp() {
