@@ -1,11 +1,7 @@
 package ru.yandex.practicum.filmorate;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.validators.ValidatorService;
 
 import javax.validation.ConstraintViolationException;
@@ -15,33 +11,34 @@ import java.time.LocalDate;
 class FilmValidatorTest {
 
     private static ValidatorService validator;
+    public static Film film;
 
     @BeforeAll
     public static void setUp() {
         validator = new ValidatorService();
     }
 
-    @Test
-    @DisplayName("Фильм с корректными данными")
+    @BeforeEach
+    @DisplayName("Создание сущности фильм")
     public void createFilm() {
-        Film film = Film.builder()
+        film = Film.builder()
                 .name("nisi eiusmod")
                 .description("adipisicing")
                 .releaseDate(LocalDate.of(2007, 3, 25))
                 .duration(100)
                 .build();
+    }
+
+    @Test
+    @DisplayName("Фильм с корректными данными")
+    public void createFilmGoodFields() {
         Assertions.assertTrue(validator.isValid(film));
     }
 
     @Test
     @DisplayName("Фильм с именем из пробела")
     public void createFilmEmptyName() {
-        Film film = Film.builder()
-                .name(" ")
-                .description("adipisicing")
-                .releaseDate(LocalDate.of(2007, 3, 25))
-                .duration(100)
-                .build();
+        film.setName(" ");
         ConstraintViolationException ex = Assertions.assertThrows(
                 ConstraintViolationException.class,
                 () -> validator.isValid(film)
@@ -53,12 +50,7 @@ class FilmValidatorTest {
     @Test
     @DisplayName("Фильм с пустым именем")
     public void createFilmNullName() {
-        Film film = Film.builder()
-                .name(null)
-                .description("adipisicing")
-                .releaseDate(LocalDate.of(2007, 3, 25))
-                .duration(100)
-                .build();
+        film.setName(null);
         ConstraintViolationException ex = Assertions.assertThrows(
                 ConstraintViolationException.class,
                 () -> validator.isValid(film)
@@ -71,12 +63,7 @@ class FilmValidatorTest {
     @Test
     @DisplayName("Фильм с описанием из пробела")
     public void createFilmEmptyDescription() {
-        Film film = Film.builder()
-                .name("nisi eiusmod")
-                .description(" ")
-                .releaseDate(LocalDate.of(2007, 3, 25))
-                .duration(100)
-                .build();
+        film.setDescription(" ");
         ConstraintViolationException ex = Assertions.assertThrows(
                 ConstraintViolationException.class,
                 () -> validator.isValid(film)
@@ -88,12 +75,7 @@ class FilmValidatorTest {
     @Test
     @DisplayName("Фильм с пустым описанием")
     public void createFilmNullDescription() {
-        Film film = Film.builder()
-                .name("nisi eiusmod")
-                .description(null)
-                .releaseDate(LocalDate.of(2007, 3, 25))
-                .duration(100)
-                .build();
+        film.setDescription(null);
         ConstraintViolationException ex = Assertions.assertThrows(
                 ConstraintViolationException.class,
                 () -> validator.isValid(film)
@@ -106,15 +88,10 @@ class FilmValidatorTest {
     @Test
     @DisplayName("Фильм с длинным описанием")
     public void createFilmLongDescription() {
-        Film film = Film.builder()
-                .name("nisi eiusmod")
-                .description("adipisicingadipisicingadipisicingadipisicingadipisicingadipisic" +
-                        "ingadipisicingadipisicingadipisicingadipisicingadipisicingadipisicin" +
-                        "gadipisicingadipisicingadipisicingadipisicinggadipisicingadipisicin" +
-                        "gadipisicingadipisicing")
-                .releaseDate(LocalDate.of(2007, 3, 25))
-                .duration(100)
-                .build();
+        film.setDescription("adipisicingadipisicingadipisicingadipisicingadipisicingadipisic" +
+                "ingadipisicingadipisicingadipisicingadipisicingadipisicingadipisicin" +
+                "gadipisicingadipisicingadipisicingadipisicinggadipisicingadipisicin" +
+                "gadipisicingadipisicing");
         ConstraintViolationException ex = Assertions.assertThrows(
                 ConstraintViolationException.class,
                 () -> validator.isValid(film)
@@ -127,12 +104,7 @@ class FilmValidatorTest {
     @Test
     @DisplayName("Фильм с ранней датой")
     public void createFilmEarlyDate() {
-        Film film = Film.builder()
-                .name("nisi eiusmod")
-                .description("adipisicing")
-                .releaseDate(LocalDate.of(1800, 3, 25))
-                .duration(100)
-                .build();
+        film.setReleaseDate(LocalDate.of(1800, 3, 25));
         ConstraintViolationException ex = Assertions.assertThrows(
                 ConstraintViolationException.class,
                 () -> validator.isValid(film)
@@ -145,24 +117,14 @@ class FilmValidatorTest {
     @Test
     @DisplayName("Фильм с днем рождения кино")
     public void createFilmBirthdayDate() {
-        Film film = Film.builder()
-                .name("nisi eiusmod")
-                .description("adipisicing")
-                .releaseDate(LocalDate.of(1895, 12, 28))
-                .duration(100)
-                .build();
+        film.setReleaseDate(LocalDate.of(1895, 12, 28));
         Assertions.assertTrue(validator.isValid(film));
     }
 
     @Test
     @DisplayName("Фильм с пустой датой")
     public void createFilmNullDate() {
-        Film film = Film.builder()
-                .name("nisi eiusmod")
-                .description("adipisicing")
-                .releaseDate(null)
-                .duration(100)
-                .build();
+        film.setReleaseDate(null);
         ValidationException ex = Assertions.assertThrows(
                 ValidationException.class,
                 () -> validator.isValid(film)
@@ -174,12 +136,7 @@ class FilmValidatorTest {
     @Test
     @DisplayName("Фильм с отрицательной продолжительностью")
     public void createFilmNegativeDuration() {
-        Film film = Film.builder()
-                .name("nisi eiusmod")
-                .description("adipisicing")
-                .releaseDate(LocalDate.of(2007, 3, 25))
-                .duration(-100)
-                .build();
+        film.setDuration(-100);
         ConstraintViolationException ex = Assertions.assertThrows(
                 ConstraintViolationException.class,
                 () -> validator.isValid(film)
@@ -191,12 +148,7 @@ class FilmValidatorTest {
     @Test
     @DisplayName("Фильм с нулевой продолжительностью")
     public void createFilmZeroDuration() {
-        Film film = Film.builder()
-                .name("nisi eiusmod")
-                .description("adipisicing")
-                .releaseDate(LocalDate.of(1900, 3, 25))
-                .duration(0)
-                .build();
+        film.setDuration(0);
         ConstraintViolationException ex = Assertions.assertThrows(
                 ConstraintViolationException.class,
                 () -> validator.isValid(film)
@@ -208,12 +160,7 @@ class FilmValidatorTest {
     @Test
     @DisplayName("Фильм с большой продолжительностью")
     public void createFilmBigDuration() {
-        Film film = Film.builder()
-                .name("nisi eiusmod")
-                .description("adipisicing")
-                .releaseDate(LocalDate.of(2007, 3, 25))
-                .duration(50000000)
-                .build();
+        film.setDuration(50000000);
         Assertions.assertTrue(validator.isValid(film));
     }
 }
