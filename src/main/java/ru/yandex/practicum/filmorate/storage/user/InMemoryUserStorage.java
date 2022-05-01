@@ -15,11 +15,12 @@ public class InMemoryUserStorage implements UserStorage {
     private final Map<Integer, User> users = new HashMap<>();
 
     @Override
-    public void create(User entity) {
+    public User create(User user) {
         int index = users.size() + 1;
-        entity.setId(index);
-        log.debug(entity.toString());
-        users.put(index, entity);
+        user.setId(index);
+        log.debug(user.toString());
+        users.put(index, user);
+        return user;
     }
 
     @Override
@@ -28,9 +29,10 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public void update(User entity) {
-        log.debug(entity.toString());
-        users.put(entity.getId(), entity);
+    public User update(User user) {
+        log.debug(user.toString());
+        users.put(user.getId(), user);
+        return user;
     }
 
     @Override

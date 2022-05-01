@@ -15,11 +15,12 @@ public class InMemoryFilmStorage implements FilmStorage {
     private final Map<Integer, Film> films = new HashMap<>();
 
     @Override
-    public void create(Film entity) {
+    public Film create(Film film) {
         int index = films.size() + 1;
-        entity.setId(index);
-        log.debug(entity.toString());
-        films.put(index, entity);
+        film.setId(index);
+        log.debug(film.toString());
+        films.put(index, film);
+        return film;
     }
 
     @Override
@@ -28,9 +29,10 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public void update(Film entity) {
-        log.debug(entity.toString());
-        films.put(entity.getId(), entity);
+    public Film update(Film film) {
+        log.debug(film.toString());
+        films.put(film.getId(), film);
+        return film;
     }
 
     @Override
