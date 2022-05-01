@@ -6,7 +6,9 @@ public interface EntityStorage<T> {
 
     T create(T entity);
 
-    Collection<T> find();
+    Collection<T> getEntities();
+
+    T getEntity(Integer id);
 
     T update(T entity);
 
