@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
@@ -9,9 +10,11 @@ import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class FilmService {
 
@@ -26,10 +29,12 @@ public class FilmService {
 
     public void createFilm(Film film) {
         storage.create(film);
+        log.info(String.format("Добавлен фильм %s", film));
     }
 
     public void updateFilm(Film film) {
         storage.update(film);
+        log.info(String.format("Обновлен фильм %s", film));
     }
 
     public Collection<Film> getAllFilms() {
@@ -47,21 +52,29 @@ public class FilmService {
     public void addLike(Integer filmId, Integer userId) {
         final User user = userService.findUserById(userId);
         final Film film = findFilmById(filmId);
-        final Set<Integer> likedFilms = user.getLikedFilms();
-        likedFilms.add(filmId);
+        if (user.getLikedFilms() == null) {
+            user.setLikedFilms(new HashSet<>());
+            log.info(String.format("Фильм %s без лайков", film));
+        }
+        user.getLikedFilms().add(filmId);
         film.setLikedCount(film.getLikedCount() + 1);
         userService.updateUser(user);
         updateFilm(film);
+        log.info(String.format("К фильму %s добавлен like от пользователя %s", film, user));
     }
 
     public void deleteLike(Integer filmId, Integer userId) {
         final User user = userService.findUserById(userId);
         final Film film = findFilmById(filmId);
-        final Set<Integer> likedFilms = user.getLikedFilms();
-        likedFilms.remove(filmId);
+        if (user.getLikedFilms() == null) {
+            user.setLikedFilms(new HashSet<>());
+            log.info(String.format("Фильм %s без лайков", film));
+        }
+        user.getLikedFilms().remove(filmId);
         film.setLikedCount(film.getLikedCount() - 1);
         userService.updateUser(user);
         updateFilm(film);
+        log.info(String.format("У фильма %s удален like от пользователя %s", film, user));
     }
 
     public Collection<Film> getPopularFilm(Integer size) {
