@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.controllers;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exceptions.IncorrectParameterException;
 import ru.yandex.practicum.filmorate.exceptions.InvalidEntityException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
@@ -25,7 +26,7 @@ public class FilmController extends EntityController<Film> {
     @Override
     public void create(@Valid @RequestBody Film film) {
         super.create(film);
-        service.addToStorage(film);
+        service.createFilm(film);
     }
 
     @PutMapping("/films")
@@ -36,16 +37,39 @@ public class FilmController extends EntityController<Film> {
             log.error(film.toString());
             throw new InvalidEntityException("Идентификатор некорректен");
         }
-        service.updateInStorage(film);
+        service.updateFilm(film);
     }
 
     @GetMapping("/films")
     public Collection<Film> find() {
-        return service.getFromStorage();
+        return service.getAllFilms();
     }
 
     @GetMapping("/films/{id}")
     public Film getFilmById(@PathVariable int id) {
         return service.findFilmById(id);
+    }
+
+    @PutMapping("/films/{id}/like/{userId}")
+    public void addLike(
+            @PathVariable int id,
+            @PathVariable int userId) {
+        service.addLike(id, userId);
+    }
+
+    @DeleteMapping("/films/{id}/like/{userId}")
+    public void deleteLike(
+            @PathVariable int id,
+            @PathVariable int userId) {
+        service.deleteLike(id, userId);
+    }
+
+    @GetMapping("/films/popular")
+    public Collection<Film> popularFilms(
+            @RequestParam(defaultValue = "10", required = false) Integer count) {
+        if (count < 0) {
+            throw new IncorrectParameterException("count");
+        }
+        return service.getPopularFilm(count);
     }
 }
