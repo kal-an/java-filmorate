@@ -24,8 +24,13 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Collection<Film> find() {
+    public Collection<Film> getEntities() {
         return films.values();
+    }
+
+    @Override
+    public Film getEntity(Integer id) {
+        return films.getOrDefault(id, null);
     }
 
     @Override

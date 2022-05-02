@@ -24,8 +24,13 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public Collection<User> find() {
+    public Collection<User> getEntities() {
         return users.values();
+    }
+
+    @Override
+    public User getEntity(Integer id) {
+        return users.getOrDefault(id, null);
     }
 
     @Override
