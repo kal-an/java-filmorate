@@ -24,9 +24,10 @@ public class FilmController extends EntityController<Film> {
 
     @PostMapping("/films")
     @Override
-    public void create(@Valid @RequestBody Film film) {
+    public Film create(@Valid @RequestBody Film film) {
         super.create(film);
         service.createFilm(film);
+        return film;
     }
 
     @PutMapping("/films")

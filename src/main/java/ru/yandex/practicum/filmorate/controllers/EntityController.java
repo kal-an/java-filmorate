@@ -13,11 +13,12 @@ import java.util.Map;
 @Slf4j
 abstract class EntityController<T extends Entity> {
 
-    public void create(@Valid @RequestBody T entity) {
+    public T create(@Valid @RequestBody T entity) {
         if (entity.getId() != null) {
             log.error(entity.toString());
             throw new InvalidEntityException("Идентификатор должен быть пустым");
         }
+        return entity;
     }
 
     public void update(@Valid @RequestBody T entity) {

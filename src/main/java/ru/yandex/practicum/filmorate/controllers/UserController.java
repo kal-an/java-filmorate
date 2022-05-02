@@ -25,13 +25,14 @@ public class UserController extends EntityController<User> {
 
     @PostMapping("/users")
     @Override
-    public void create(@Valid @RequestBody User user) {
+    public User create(@Valid @RequestBody User user) {
         if (user.getName() == null || user.getName().isBlank()) {
             log.info(user.toString());
             user.setName(user.getLogin());
         }
         super.create(user);
         service.createUser(user);
+        return user;
     }
 
     @PutMapping("/users")
