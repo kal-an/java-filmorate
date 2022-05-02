@@ -53,4 +53,9 @@ public class UserController extends EntityController<User> {
     public Collection<User> find() {
         return service.getFromStorage();
     }
+
+    @GetMapping("/users/{id}")
+    public User getUserById(@PathVariable int id) {
+        return service.findUserById(id);
+    }
 }
