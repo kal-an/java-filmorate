@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exceptions.InvalidEntityException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
@@ -30,23 +31,26 @@ public class UserController extends EntityController<User> {
             user.setName(user.getLogin());
         }
         super.create(user);
+        service.addToStorage(user);
     }
 
     @PutMapping("/users")
     @Override
     public void update(@Valid @RequestBody User user) {
+        super.update(user);
         if (user.getName() == null || user.getName().isBlank()) {
             log.info(user.toString());
             user.setName(user.getLogin());
         }
-        super.update(user);
+        if (service.findUserById(user.getId()) == null) {
+            log.error(user.toString());
+            throw new InvalidEntityException("Идентификатор некорректен");
+        }
+        service.updateInStorage(user);
     }
 
     @GetMapping("/users")
-    @Override
     public Collection<User> find() {
-        Collection<User> userList = super.find();
-        log.debug("Текущее количество пользователей: {}", userList.size());
-        return userList;
+        return service.getFromStorage();
     }
 }
