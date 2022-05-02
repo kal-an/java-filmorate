@@ -5,6 +5,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Builder
 @AllArgsConstructor
@@ -25,4 +26,6 @@ public class User extends Entity {
     @Past
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthday;
+    private Set<Integer> friends;
+    private Set<Integer> likedFilms;
 }
