@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
@@ -10,6 +11,7 @@ import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class UserService {
 
@@ -22,10 +24,12 @@ public class UserService {
 
     public void createUser(User user) {
         storage.create(user);
+        log.info(String.format("Добавлен пользователь %s", user));
     }
 
     public void updateUser(User user) {
         storage.update(user);
+        log.info(String.format("Обновлен пользователь %s", user));
     }
 
     public Collection<User> getAllUsers() {
@@ -43,15 +47,25 @@ public class UserService {
     public void addFriend(Integer id, Integer friendId) {
         final User user = findUserById(id);
         findUserById(friendId);
+        if (user.getFriends() == null) {
+            user.setFriends(new HashSet<>());
+            log.info(String.format("Пользователь %s без друзей", user));
+        }
         user.getFriends().add(friendId);
         updateUser(user);
+        log.info(String.format("К пользователю %s, добавлен друг с ID %s", user, friendId));
     }
 
     public void deleteFriend(Integer id, Integer friendId) {
         final User user = findUserById(id);
         findUserById(friendId);
+        if (user.getFriends() == null) {
+            user.setFriends(new HashSet<>());
+            log.info(String.format("Пользователь %s без друзей", user));
+        }
         user.getFriends().remove(friendId);
         updateUser(user);
+        log.info(String.format("У пользователя %s, удален друг с ID %s", user, friendId));
     }
 
     public Collection<User> getUserFriends(Integer id) {
