@@ -30,5 +30,5 @@ public class Film extends Entity {
     @NotNull(message = "Продолжительность фильма не может быть пустой")
     private long duration;
     @Min(value = 0)
-    private Integer likedCount;
+    private int likedCount;
 }
