@@ -43,4 +43,9 @@ public class FilmController extends EntityController<Film> {
     public Collection<Film> find() {
         return service.getFromStorage();
     }
+
+    @GetMapping("/films/{id}")
+    public Film getFilmById(@PathVariable int id) {
+        return service.findFilmById(id);
+    }
 }
