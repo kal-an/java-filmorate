@@ -31,7 +31,7 @@ public class UserController extends EntityController<User> {
             user.setName(user.getLogin());
         }
         super.create(user);
-        service.addToStorage(user);
+        service.createUser(user);
     }
 
     @PutMapping("/users")
@@ -46,16 +46,43 @@ public class UserController extends EntityController<User> {
             log.error(user.toString());
             throw new InvalidEntityException("Идентификатор некорректен");
         }
-        service.updateInStorage(user);
+        service.updateUser(user);
     }
 
     @GetMapping("/users")
     public Collection<User> find() {
-        return service.getFromStorage();
+        return service.getAllUsers();
     }
 
     @GetMapping("/users/{id}")
     public User getUserById(@PathVariable int id) {
         return service.findUserById(id);
     }
+
+    @PutMapping("/users/{id}/friends/{friendId}")
+    public void addUserToFriends(
+            @PathVariable int id,
+            @PathVariable int friendId) {
+        service.addFriend(id, friendId);
+    }
+
+    @DeleteMapping("/users/{id}/friends/{friendId}")
+    public void deleteFriend(
+            @PathVariable int id,
+            @PathVariable int friendId) {
+        service.deleteFriend(id, friendId);
+    }
+
+    @GetMapping("/users/{id}/friends")
+    public Collection<User> getUserFriends(@PathVariable int id) {
+        return service.getUserFriends(id);
+    }
+
+    @GetMapping("/users/{id}/friends/common/{otherId}")
+    public Collection<User> getCommonFriends(
+            @PathVariable int id,
+            @PathVariable int otherId) {
+        return service.getCommonFriends(id, otherId);
+    }
+
 }
