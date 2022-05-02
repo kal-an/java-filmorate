@@ -29,4 +29,6 @@ public class Film extends Entity {
     @Min(value = 1, message = "Продолжительность фильма не может быть меньше 0")
     @NotNull(message = "Продолжительность фильма не может быть пустой")
     private long duration;
+    @Min(value = 0)
+    private Integer likedCount;
 }
