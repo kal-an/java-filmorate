@@ -46,25 +46,37 @@ public class UserService {
 
     public void addFriend(Integer id, Integer friendId) {
         final User user = findUserById(id);
-        findUserById(friendId);
+        final User friend = findUserById(friendId);
         if (user.getFriends() == null) {
             user.setFriends(new HashSet<>());
             log.info(String.format("Пользователь %s без друзей", user));
         }
+        if (friend.getFriends() == null) {
+            friend.setFriends(new HashSet<>());
+            log.info(String.format("Пользователь %s без друзей", friend));
+        }
         user.getFriends().add(friendId);
+        friend.getFriends().add(id);
         updateUser(user);
+        updateUser(friend);
         log.info(String.format("К пользователю %s, добавлен друг с ID %s", user, friendId));
     }
 
     public void deleteFriend(Integer id, Integer friendId) {
         final User user = findUserById(id);
-        findUserById(friendId);
+        final User friend = findUserById(friendId);
         if (user.getFriends() == null) {
             user.setFriends(new HashSet<>());
             log.info(String.format("Пользователь %s без друзей", user));
         }
+        if (friend.getFriends() == null) {
+            friend.setFriends(new HashSet<>());
+            log.info(String.format("Пользователь %s без друзей", friend));
+        }
         user.getFriends().remove(friendId);
+        friend.getFriends().remove(id);
         updateUser(user);
+        updateUser(friend);
         log.info(String.format("У пользователя %s, удален друг с ID %s", user, friendId));
     }
 
