@@ -32,13 +32,14 @@ public class FilmController extends EntityController<Film> {
 
     @PutMapping("/films")
     @Override
-    public void update(@Valid @RequestBody Film film) {
+    public Film update(@Valid @RequestBody Film film) {
         super.update(film);
         if (service.findFilmById(film.getId()) == null) {
             log.error(film.toString());
             throw new InvalidEntityException("Идентификатор некорректен");
         }
         service.updateFilm(film);
+        return film;
     }
 
     @GetMapping("/films")

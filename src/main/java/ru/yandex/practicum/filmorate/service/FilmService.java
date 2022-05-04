@@ -32,9 +32,10 @@ public class FilmService {
         log.info(String.format("Добавлен фильм %s", film));
     }
 
-    public void updateFilm(Film film) {
+    public Film updateFilm(Film film) {
         storage.update(film);
         log.info(String.format("Обновлен фильм %s", film));
+        return film;
     }
 
     public Collection<Film> getAllFilms() {

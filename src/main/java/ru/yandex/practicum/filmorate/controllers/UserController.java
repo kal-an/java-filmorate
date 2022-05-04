@@ -37,7 +37,7 @@ public class UserController extends EntityController<User> {
 
     @PutMapping("/users")
     @Override
-    public void update(@Valid @RequestBody User user) {
+    public User update(@Valid @RequestBody User user) {
         super.update(user);
         if (user.getName() == null || user.getName().isBlank()) {
             log.info(user.toString());
@@ -48,6 +48,7 @@ public class UserController extends EntityController<User> {
             throw new InvalidEntityException("Идентификатор некорректен");
         }
         service.updateUser(user);
+        return user;
     }
 
     @GetMapping("/users")

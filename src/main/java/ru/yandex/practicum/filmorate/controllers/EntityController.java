@@ -21,10 +21,11 @@ abstract class EntityController<T extends Entity> {
         return entity;
     }
 
-    public void update(@Valid @RequestBody T entity) {
+    public T update(@Valid @RequestBody T entity) {
         if (entity.getId() == null) {
             log.error(entity.toString());
             throw new InvalidEntityException("Идентификатор не может быть пустым");
         }
+        return entity;
     }
 }

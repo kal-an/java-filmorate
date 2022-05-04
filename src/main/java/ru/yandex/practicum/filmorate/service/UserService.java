@@ -30,9 +30,10 @@ public class UserService {
         log.info(String.format("Добавлен пользователь %s", user));
     }
 
-    public void updateUser(User user) {
+    public User updateUser(User user) {
         storage.update(user);
         log.info(String.format("Обновлен пользователь %s", user));
+        return user;
     }
 
     public Collection<User> getAllUsers() {
