@@ -57,7 +57,7 @@ public class FilmService {
             log.info(String.format("Фильм %s без лайков", film));
         }
         user.getLikedFilms().add(filmId);
-        film.setLikedCount(film.getLikedCount() + 1);
+        film.setRate(film.getRate() + 1);
         userService.updateUser(user);
         updateFilm(film);
         log.info(String.format("К фильму %s добавлен like от пользователя %s", film, user));
@@ -71,7 +71,7 @@ public class FilmService {
             log.info(String.format("Фильм %s без лайков", film));
         }
         user.getLikedFilms().remove(filmId);
-        film.setLikedCount(film.getLikedCount() - 1);
+        film.setRate(film.getRate() - 1);
         userService.updateUser(user);
         updateFilm(film);
         log.info(String.format("У фильма %s удален like от пользователя %s", film, user));
@@ -80,7 +80,7 @@ public class FilmService {
     public List<Film> getPopularFilm(Integer size) {
         return storage.getEntities()
                 .stream()
-                .sorted(Comparator.comparing(Film::getLikedCount).reversed())
+                .sorted(Comparator.comparing(Film::getRate).reversed())
                 .limit(size)
                 .collect(Collectors.toList());
     }
