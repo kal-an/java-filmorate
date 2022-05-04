@@ -2267,7 +2267,6 @@
 									"    pm.expect(jsonData.description).to.eql('Duis in consequat esse');    \r",
 									"    pm.expect(jsonData.releaseDate).to.eql('1979-04-17');\r",
 									"    pm.expect(jsonData.duration).to.eql(100);\r",
-									"    pm.expect(jsonData.rate).to.eql(0);\r",
 									"});"
 								],
 								"type": "text/javascript"
@@ -2808,7 +2807,6 @@
 									"    pm.expect(jsonData.description).to.eql('New film update decription');    \r",
 									"    pm.expect(jsonData.releaseDate).to.eql('1989-04-17');\r",
 									"    pm.expect(jsonData.duration).to.eql(190);\r",
-									"    pm.expect(jsonData.rate).to.eql(0);\r",
 									"});"
 								],
 								"type": "text/javascript"
@@ -3010,7 +3008,6 @@
 									"    pm.expect(jsonData[0].description).to.eql('New film update decription');    \r",
 									"    pm.expect(jsonData[0].releaseDate).to.eql('1989-04-17');\r",
 									"    pm.expect(jsonData[0].duration).to.eql(190);\r",
-									"    pm.expect(jsonData[0].rate).to.eql(0);\r",
 									"});"
 								],
 								"type": "text/javascript"
@@ -3172,7 +3169,6 @@
 									"    pm.expect(jsonData.description).to.eql('New film about friends');    \r",
 									"    pm.expect(jsonData.releaseDate).to.eql('1999-04-30');\r",
 									"    pm.expect(jsonData.duration).to.eql(120);\r",
-									"    pm.expect(jsonData.rate).to.eql(0);\r",
 									"});"
 								],
 								"type": "text/javascript"
@@ -3767,7 +3763,7 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "1",
+									"value": "2",
 									"description": "(Required) "
 								},
 								{
@@ -3959,14 +3955,14 @@
 									"pm.test(\"Status code is 200\", function () {\r",
 									"    pm.response.to.have.status(200);\r",
 									"});\r",
-									"pm.test(\"Test email\", function () {\r",
+									"pm.test(\"Test popular\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
 									"    pm.expect(jsonData.length).to.eql(1);\r",
-									"    pm.expect(jsonData[0].name).to.eql('Film Updated');\r",
-									"    pm.expect(jsonData[0].description).to.eql('New film update decription');    \r",
-									"    pm.expect(jsonData[0].releaseDate).to.eql('1989-04-17');\r",
-									"    pm.expect(jsonData[0].duration).to.eql(190);\r",
-									"    pm.expect(jsonData[0].rate).to.eql(1);\r",
+									"    pm.expect(jsonData[0].id).to.eql(2);\r",
+									"    pm.expect(jsonData[0].name).to.eql('New film');\r",
+									"    pm.expect(jsonData[0].description).to.eql('New film about friends');    \r",
+									"    pm.expect(jsonData[0].releaseDate).to.eql('1999-04-30');\r",
+									"    pm.expect(jsonData[0].duration).to.eql(120);\r",
 									"});"
 								],
 								"type": "text/javascript"
@@ -4150,7 +4146,7 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "1",
+									"value": "2",
 									"description": "(Required) "
 								},
 								{
@@ -4342,11 +4338,9 @@
 									"pm.test(\"Status code is 200\", function () {\r",
 									"    pm.response.to.have.status(200);\r",
 									"});\r",
-									"pm.test(\"Test email\", function () {\r",
+									"pm.test(\"Test popular\", function () {\r",
 									"    var jsonData = pm.response.json();\r",
 									"    pm.expect(jsonData.length).to.eql(2);\r",
-									"    pm.expect(jsonData[0].rate).to.eql(0);\r",
-									"    pm.expect(jsonData[0].rate).to.eql(0);\r",
 									"});"
 								],
 								"type": "text/javascript"
