@@ -11,7 +11,7 @@ import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -77,7 +77,7 @@ public class FilmService {
         log.info(String.format("У фильма %s удален like от пользователя %s", film, user));
     }
 
-    public Collection<Film> getPopularFilm(Integer size) {
+    public List<Film> getPopularFilm(Integer size) {
         return storage.getEntities()
                 .stream()
                 .sorted(Comparator.comparing(Film::getLikedCount).reversed())

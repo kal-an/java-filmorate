@@ -8,7 +8,10 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -80,14 +83,14 @@ public class UserService {
         log.info(String.format("У пользователя %s, удален друг с ID %s", user, friendId));
     }
 
-    public Collection<User> getUserFriends(Integer id) {
+    public List<User> getUserFriends(Integer id) {
         final User user = findUserById(id);
         return user.getFriends().stream()
                 .map(this::findUserById)
                 .collect(Collectors.toList());
     }
 
-    public Collection<User> getCommonFriends(Integer id, Integer otherId) {
+    public List<User> getCommonFriends(Integer id, Integer otherId) {
         User firstUser = findUserById(id);
         User secondUser = findUserById(otherId);
         Set<Integer> firstUserFriends = firstUser.getFriends();
