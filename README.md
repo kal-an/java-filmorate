@@ -10,7 +10,7 @@
 8. оценивать фильмы.
 
 ## Описание базы-данных
-/db/Filmorate.png
+![Filmorate DB](/db/Filmorate.png)
 1. Получение всех фильмов 
 SELECT * FROM film
 2. Получение фильма по ID
