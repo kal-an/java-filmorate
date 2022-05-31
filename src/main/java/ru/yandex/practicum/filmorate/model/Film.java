@@ -11,6 +11,7 @@ import java.time.LocalDate;
 
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @ToString
@@ -31,4 +32,13 @@ public class Film extends Entity {
     private long duration;
     @Min(value = 0)
     private int rate;
+
+    public Film(Integer id, String name, String description, LocalDate releaseDate, long duration, int rate) {
+        this.setId(id);
+        this.name = name;
+        this.description = description;
+        this.releaseDate = releaseDate;
+        this.duration = duration;
+        this.rate = rate;
+    }
 }
