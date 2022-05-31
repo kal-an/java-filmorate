@@ -8,10 +8,7 @@ import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -25,12 +22,12 @@ public class UserService {
         this.storage = storage;
     }
 
-    public User createUser(User user) {
+    public Optional<User> createUser(User user) {
         log.info(String.format("Добавлен пользователь %s", user));
         return storage.create(user);
     }
 
-    public User updateUser(User user) {
+    public Optional<User> updateUser(User user) {
         log.info(String.format("Обновлен пользователь %s", user));
         return storage.update(user);
     }
@@ -39,66 +36,90 @@ public class UserService {
         return storage.getEntities();
     }
 
-    public User findUserById(Integer id) {
-        final User user = storage.getEntity(id);
-        if (user == null) {
+    public Optional<User> findUserById(Integer id) {
+        final Optional<User> optionalUser = storage.getEntity(id);
+        if (optionalUser.isEmpty()) {
             throw new UserNotFoundException(String.format("Пользователь c ID %s не найден", id));
         }
         return storage.getEntity(id);
     }
 
     public void addFriend(Integer id, Integer friendId) {
-        final User user = findUserById(id);
-        final User friend = findUserById(friendId);
-        if (user.getFriends() == null) {
-            user.setFriends(new HashSet<>());
-            log.info(String.format("Пользователь %s без друзей", user));
+        final Optional<User> optionalUser = findUserById(id);
+        final Optional<User> optionalFriend = findUserById(friendId);
+        if (optionalUser.isPresent()) {
+            final User user = optionalUser.get();
+            if (user.getFriends() == null) {
+                user.setFriends(new HashSet<>());
+                log.info(String.format("Пользователь %s без друзей", user));
+            }
+            user.getFriends().add(friendId);
+            updateUser(user);
         }
-        if (friend.getFriends() == null) {
-            friend.setFriends(new HashSet<>());
-            log.info(String.format("Пользователь %s без друзей", friend));
+        if (optionalFriend.isPresent()) {
+            final User friend = optionalFriend.get();
+            if (friend.getFriends() == null) {
+                friend.setFriends(new HashSet<>());
+                log.info(String.format("Пользователь %s без друзей", friend));
+            }
+            friend.getFriends().add(friendId);
+            updateUser(friend);
         }
-        user.getFriends().add(friendId);
-        friend.getFriends().add(id);
-        updateUser(user);
-        updateUser(friend);
-        log.info(String.format("К пользователю %s, добавлен друг с ID %s", user, friendId));
     }
 
     public void deleteFriend(Integer id, Integer friendId) {
-        final User user = findUserById(id);
-        final User friend = findUserById(friendId);
-        if (user.getFriends() == null) {
-            user.setFriends(new HashSet<>());
-            log.info(String.format("Пользователь %s без друзей", user));
+        final Optional<User> optionalUser = findUserById(id);
+        final Optional<User> optionalFriend = findUserById(friendId);
+        if (optionalUser.isPresent()) {
+            final User user = optionalUser.get();
+            if (user.getFriends() == null) {
+                user.setFriends(new HashSet<>());
+                log.info(String.format("Пользователь %s без друзей", user));
+            }
+            user.getFriends().remove(friendId);
+            updateUser(user);
         }
-        if (friend.getFriends() == null) {
-            friend.setFriends(new HashSet<>());
-            log.info(String.format("Пользователь %s без друзей", friend));
+        if (optionalFriend.isPresent()) {
+            final User friend = optionalFriend.get();
+            if (friend.getFriends() == null) {
+                friend.setFriends(new HashSet<>());
+                log.info(String.format("Пользователь %s без друзей", friend));
+            }
+            friend.getFriends().remove(id);
+            updateUser(friend);
         }
-        user.getFriends().remove(friendId);
-        friend.getFriends().remove(id);
-        updateUser(user);
-        updateUser(friend);
-        log.info(String.format("У пользователя %s, удален друг с ID %s", user, friendId));
     }
 
     public List<User> getUserFriends(Integer id) {
-        final User user = findUserById(id);
-        return user.getFriends().stream()
-                .map(this::findUserById)
-                .collect(Collectors.toList());
+        final Optional<User> optionalUser = findUserById(id);
+        if (optionalUser.isPresent()) {
+            final User user = optionalUser.get();
+            return user.getFriends().stream()
+                    .map(this::findUserById)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .collect(Collectors.toList());
+        }
+        return List.of();
     }
 
     public List<User> getCommonFriends(Integer id, Integer otherId) {
-        User firstUser = findUserById(id);
-        User secondUser = findUserById(otherId);
-        Set<Integer> firstUserFriends = firstUser.getFriends();
-        Set<Integer> secondUserFriends = secondUser.getFriends();
+        final Optional<User> optionalFirstUser = findUserById(id);
+        final Optional<User> optionalSecondUser = findUserById(otherId);
+        Set<Integer> firstUserFriends = new HashSet<>();
+        Set<Integer> secondUserFriends = new HashSet<>();
+        if (optionalFirstUser.isPresent()) {
+            firstUserFriends = optionalFirstUser.get().getFriends();
+        }
+        if (optionalSecondUser.isPresent()) {
+            secondUserFriends = optionalSecondUser.get().getFriends();
+        }
         Set<Integer> commonFriendsId = new HashSet<>(firstUserFriends);
         commonFriendsId.retainAll(secondUserFriends);
         return commonFriendsId.stream()
                 .map(this::findUserById)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
                 .collect(Collectors.toList());
     }
 

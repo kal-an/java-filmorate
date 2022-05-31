@@ -8,10 +8,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -27,55 +24,66 @@ public class FilmService {
         this.userService = userService;
     }
 
-    public void createFilm(Film film) {
-        storage.create(film);
+    public Optional<Film> createFilm(Film film) {
         log.info(String.format("Добавлен фильм %s", film));
+        return storage.create(film);
     }
 
-    public Film updateFilm(Film film) {
-        storage.update(film);
+    public Optional<Film> updateFilm(Film film) {
         log.info(String.format("Обновлен фильм %s", film));
-        return film;
+        return storage.update(film);
     }
 
     public Collection<Film> getAllFilms() {
         return storage.getEntities();
     }
 
-    public Film findFilmById(Integer id) {
-        final Film film = storage.getEntity(id);
-        if (film == null) {
+    public Optional<Film> findFilmById(Integer id) {
+        final Optional<Film> optionalFilm = storage.getEntity(id);
+        if (optionalFilm.isEmpty()) {
             throw new FilmNotFoundException(String.format("Фильм c ID %s не найден", id));
         }
-        return film;
+        return optionalFilm;
     }
 
     public void addLike(Integer filmId, Integer userId) {
-        final User user = userService.findUserById(userId);
-        final Film film = findFilmById(filmId);
-        if (user.getLikedFilms() == null) {
-            user.setLikedFilms(new HashSet<>());
-            log.info(String.format("Фильм %s без лайков", film));
+        final Optional<User> optionalUser = userService.findUserById(userId);
+        final Optional<Film> optionalFilm = findFilmById(filmId);
+        if (optionalUser.isPresent()) {
+            final User user = optionalUser.get();
+            if (user.getLikedFilms() == null) {
+                user.setLikedFilms(new HashSet<>());
+            }
+            user.getLikedFilms().add(filmId);
+            userService.updateUser(user);
+            log.info(String.format("Пользователь %s поставил like", user));
         }
-        user.getLikedFilms().add(filmId);
-        film.setRate(film.getRate() + 1);
-        userService.updateUser(user);
-        updateFilm(film);
-        log.info(String.format("К фильму %s добавлен like от пользователя %s", film, user));
+        if (optionalFilm.isPresent()) {
+            final Film film = optionalFilm.get();
+            film.setRate(film.getRate() + 1);
+            updateFilm(film);
+            log.info(String.format("К фильму %s добавлен like", film));
+        }
     }
 
     public void deleteLike(Integer filmId, Integer userId) {
-        final User user = userService.findUserById(userId);
-        final Film film = findFilmById(filmId);
-        if (user.getLikedFilms() == null) {
-            user.setLikedFilms(new HashSet<>());
-            log.info(String.format("Фильм %s без лайков", film));
+        final Optional<User> optionalUser = userService.findUserById(userId);
+        final Optional<Film> optionalFilm = findFilmById(filmId);
+        if (optionalUser.isPresent()) {
+            final User user = optionalUser.get();
+            if (user.getLikedFilms() == null) {
+                user.setLikedFilms(new HashSet<>());
+            }
+            user.getLikedFilms().remove(filmId);
+            userService.updateUser(user);
+            log.info(String.format("Пользователь %s удалил like", user));
         }
-        user.getLikedFilms().remove(filmId);
-        film.setRate(film.getRate() - 1);
-        userService.updateUser(user);
-        updateFilm(film);
-        log.info(String.format("У фильма %s удален like от пользователя %s", film, user));
+        if (optionalFilm.isPresent()) {
+            final Film film = optionalFilm.get();
+            film.setRate(film.getRate() - 1);
+            updateFilm(film);
+            log.info(String.format("У фильма %s удален like", film));
+        }
     }
 
     public List<Film> getPopularFilm(Integer size) {

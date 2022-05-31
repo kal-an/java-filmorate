@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @Component
@@ -15,12 +16,12 @@ public class InMemoryUserStorage implements UserStorage {
     private final Map<Integer, User> users = new HashMap<>();
 
     @Override
-    public User create(User user) {
+    public Optional<User> create(User user) {
         int index = users.size() + 1;
         user.setId(index);
         log.debug(user.toString());
         users.put(index, user);
-        return user;
+        return Optional.of(user);
     }
 
     @Override
@@ -29,15 +30,15 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User getEntity(Integer id) {
-        return users.getOrDefault(id, null);
+    public Optional<User> getEntity(Integer id) {
+        return Optional.of(users.get(id));
     }
 
     @Override
-    public User update(User user) {
+    public Optional<User> update(User user) {
         log.debug(user.toString());
         users.put(user.getId(), user);
-        return user;
+        return Optional.of(user);
     }
 
     @Override

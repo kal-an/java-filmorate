@@ -17,6 +17,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.Optional;
 
 @Repository
 public class UserDbStorage implements UserStorage {
@@ -30,7 +31,7 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public User create(User entity) {
+    public Optional<User> create(User entity) {
         String sql = "INSERT INTO user (login, name, email, birthday) VALUES (?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
@@ -51,18 +52,22 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public User getEntity(Integer id) {
+    public Optional<User> getEntity(Integer id) {
         String sql = "SELECT * FROM user WHERE user_id = ?";
-        User user = jdbcTemplate.queryForObject(sql, (rs, rowNum) -> makeUser(rs), id);
-        if (user == null) {
+        final Optional<User> optionalUser = jdbcTemplate
+                .query(sql, (rs, rowNum) -> makeUser(rs), id)
+                .stream()
+                .findFirst();
+        if (optionalUser.isEmpty()) {
             throw new UserNotFoundException(String.format("Пользователь c ID %s не найден", id));
         }
+        final User user = optionalUser.get();
         log.info("Найден пользователь: {} {}", user.getId(), user.getName());
-        return user;
+        return Optional.of(user);
     }
 
     @Override
-    public User update(User entity) {
+    public Optional<User> update(User entity) {
         String sql = "UPDATE user SET login = ?, name = ?, email = ?, birthday = ? WHERE user_id = ?";
         jdbcTemplate.update(sql,
                 entity.getLogin(),
@@ -70,7 +75,13 @@ public class UserDbStorage implements UserStorage {
                 entity.getEmail(),
                 entity.getBirthday(),
                 entity.getId());
-        return new User(entity.getId(), entity.getLogin(), entity.getName(), entity.getEmail(), entity.getBirthday());
+        User user = new User(
+                entity.getId(),
+                entity.getLogin(),
+                entity.getName(),
+                entity.getEmail(),
+                entity.getBirthday());
+        return Optional.of(user);
     }
 
     @Override

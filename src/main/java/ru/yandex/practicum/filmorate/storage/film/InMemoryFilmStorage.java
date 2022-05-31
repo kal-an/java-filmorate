@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @Component
@@ -15,12 +16,12 @@ public class InMemoryFilmStorage implements FilmStorage {
     private final Map<Integer, Film> films = new HashMap<>();
 
     @Override
-    public Film create(Film film) {
+    public Optional<Film> create(Film film) {
         int index = films.size() + 1;
         film.setId(index);
         log.debug(film.toString());
         films.put(index, film);
-        return film;
+        return Optional.of(film);
     }
 
     @Override
@@ -29,15 +30,15 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film getEntity(Integer id) {
-        return films.getOrDefault(id, null);
+    public Optional<Film> getEntity(Integer id) {
+        return Optional.of(films.get(id));
     }
 
     @Override
-    public Film update(Film film) {
+    public Optional<Film> update(Film film) {
         log.debug(film.toString());
         films.put(film.getId(), film);
-        return film;
+        return Optional.of(film);
     }
 
     @Override

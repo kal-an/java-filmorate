@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
 import java.util.Collection;
+import java.util.Optional;
 
 @Validated
 @RestController
@@ -25,7 +26,7 @@ public class UserController extends EntityController<User> {
 
     @PostMapping("/users")
     @Override
-    public User create(@Valid @RequestBody User user) {
+    public Optional<User> create(@Valid @RequestBody User user) {
         if (user.getName() == null || user.getName().isBlank()) {
             log.info(user.toString());
             user.setName(user.getLogin());
@@ -36,13 +37,13 @@ public class UserController extends EntityController<User> {
 
     @PutMapping("/users")
     @Override
-    public User update(@Valid @RequestBody User user) {
+    public Optional<User> update(@Valid @RequestBody User user) {
         super.update(user);
         if (user.getName() == null || user.getName().isBlank()) {
             log.info(user.toString());
             user.setName(user.getLogin());
         }
-        if (service.findUserById(user.getId()) == null) {
+        if (service.findUserById(user.getId()).isEmpty()) {
             log.error(user.toString());
             throw new InvalidEntityException("Идентификатор некорректен");
         }
@@ -55,7 +56,7 @@ public class UserController extends EntityController<User> {
     }
 
     @GetMapping("/users/{id}")
-    public User getUserById(@PathVariable int id) {
+    public Optional<User> getUserById(@PathVariable int id) {
         return service.findUserById(id);
     }
 
