@@ -46,7 +46,8 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public Collection<User> getEntities() {
-        return null;
+        String sql = "SELECT * FROM user";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> makeUser(rs));
     }
 
     @Override
@@ -62,12 +63,20 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User update(User entity) {
-        return null;
+        String sql = "UPDATE user SET login = ?, name = ?, email = ?, birthday = ? WHERE user_id = ?";
+        jdbcTemplate.update(sql,
+                entity.getLogin(),
+                entity.getName(),
+                entity.getEmail(),
+                entity.getBirthday(),
+                entity.getId());
+        return new User(entity.getId(), entity.getLogin(), entity.getName(), entity.getEmail(), entity.getBirthday());
     }
 
     @Override
     public void delete(Integer id) {
-
+        String sql = "DELETE FROM user WHERE user_id = ?";
+        jdbcTemplate.update(sql, id);
     }
 
     private User makeUser(ResultSet rs) throws SQLException {
