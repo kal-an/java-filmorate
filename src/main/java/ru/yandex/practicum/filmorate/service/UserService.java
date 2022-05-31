@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dao.FriendDao;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
@@ -16,10 +17,12 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserStorage storage;
+    private final FriendDao friendDao;
 
     @Autowired
-    public UserService(@Qualifier("userDbStorage") UserStorage storage) {
+    public UserService(@Qualifier("userDbStorage") UserStorage storage, FriendDao friendDao) {
         this.storage = storage;
+        this.friendDao = friendDao;
     }
 
     public Optional<User> createUser(User user) {
@@ -49,19 +52,11 @@ public class UserService {
         final Optional<User> optionalFriend = findUserById(friendId);
         if (optionalUser.isPresent()) {
             final User user = optionalUser.get();
-            if (user.getFriends() == null) {
-                user.setFriends(new HashSet<>());
-                log.info(String.format("Пользователь %s без друзей", user));
-            }
             user.getFriends().add(friendId);
             updateUser(user);
         }
         if (optionalFriend.isPresent()) {
             final User friend = optionalFriend.get();
-            if (friend.getFriends() == null) {
-                friend.setFriends(new HashSet<>());
-                log.info(String.format("Пользователь %s без друзей", friend));
-            }
             friend.getFriends().add(friendId);
             updateUser(friend);
         }
@@ -72,19 +67,11 @@ public class UserService {
         final Optional<User> optionalFriend = findUserById(friendId);
         if (optionalUser.isPresent()) {
             final User user = optionalUser.get();
-            if (user.getFriends() == null) {
-                user.setFriends(new HashSet<>());
-                log.info(String.format("Пользователь %s без друзей", user));
-            }
             user.getFriends().remove(friendId);
             updateUser(user);
         }
         if (optionalFriend.isPresent()) {
             final User friend = optionalFriend.get();
-            if (friend.getFriends() == null) {
-                friend.setFriends(new HashSet<>());
-                log.info(String.format("Пользователь %s без друзей", friend));
-            }
             friend.getFriends().remove(id);
             updateUser(friend);
         }
@@ -93,8 +80,7 @@ public class UserService {
     public List<User> getUserFriends(Integer id) {
         final Optional<User> optionalUser = findUserById(id);
         if (optionalUser.isPresent()) {
-            final User user = optionalUser.get();
-            return user.getFriends().stream()
+            return friendDao.getFriendsId(id).stream()
                     .map(this::findUserById)
                     .filter(Optional::isPresent)
                     .map(Optional::get)
