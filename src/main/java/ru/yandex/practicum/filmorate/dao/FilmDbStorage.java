@@ -9,7 +9,6 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
 import java.sql.Date;
@@ -69,7 +68,8 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Optional<Film> update(Film entity) {
-        String sql = "UPDATE user SET login = ?, name = ?, email = ?, birthday = ? WHERE user_id = ?";
+        String sql = "UPDATE film SET name = ?, description = ?, release_date = ?, duration = ?, rate = ? " +
+                "WHERE user_id = ?";
         jdbcTemplate.update(sql,
                 entity.getName(),
                 entity.getDescription(),
@@ -88,7 +88,8 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public void delete(Integer id) {
-
+        String sql = "DELETE FROM film WHERE film_id = ?";
+        jdbcTemplate.update(sql, id);
     }
 
     private Film makeFilm(ResultSet rs) throws SQLException {
