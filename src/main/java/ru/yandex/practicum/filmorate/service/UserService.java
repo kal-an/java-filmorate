@@ -25,15 +25,14 @@ public class UserService {
         this.storage = storage;
     }
 
-    public void createUser(User user) {
-        storage.create(user);
+    public User createUser(User user) {
         log.info(String.format("Добавлен пользователь %s", user));
+        return storage.create(user);
     }
 
     public User updateUser(User user) {
-        storage.update(user);
         log.info(String.format("Обновлен пользователь %s", user));
-        return user;
+        return storage.update(user);
     }
 
     public Collection<User> getAllUsers() {
