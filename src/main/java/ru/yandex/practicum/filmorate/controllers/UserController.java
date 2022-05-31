@@ -31,8 +31,7 @@ public class UserController extends EntityController<User> {
             user.setName(user.getLogin());
         }
         super.create(user);
-        service.createUser(user);
-        return user;
+        return service.createUser(user);
     }
 
     @PutMapping("/users")
@@ -47,8 +46,7 @@ public class UserController extends EntityController<User> {
             log.error(user.toString());
             throw new InvalidEntityException("Идентификатор некорректен");
         }
-        service.updateUser(user);
-        return user;
+        return service.updateUser(user);
     }
 
     @GetMapping("/users")
