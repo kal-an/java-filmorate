@@ -7,11 +7,15 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -49,7 +53,17 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Optional<Film> getEntity(Integer id) {
-        return Optional.empty();
+        String sql = "SELECT * FROM film WHERE film_id = ?";
+        final Optional<Film> optionalFilm = jdbcTemplate
+                .query(sql, (rs, rowNum) -> makeFilm(rs), id)
+                .stream()
+                .findFirst();
+        if (optionalFilm.isEmpty()) {
+            throw new UserNotFoundException(String.format("Фильм c ID %s не найден", id));
+        }
+        final Film film = optionalFilm.get();
+        log.info("Найден фильм: {} {}", film.getId(), film.getName());
+        return Optional.of(film);
     }
 
     @Override
@@ -60,5 +74,15 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public void delete(Integer id) {
 
+    }
+
+    private Film makeFilm(ResultSet rs) throws SQLException {
+        Integer id = rs.getInt("film_id");
+        String name = rs.getString("name");
+        String description = rs.getString("description");
+        LocalDate releaseDate = rs.getDate("release_date").toLocalDate();
+        Long duration = rs.getLong("duration");
+        Integer rate = rs.getInt("rate");
+        return new Film(id, name, description, releaseDate, duration, rate);
     }
 }
