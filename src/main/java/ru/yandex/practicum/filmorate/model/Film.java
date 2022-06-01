@@ -8,8 +8,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
 
 @Builder
 @AllArgsConstructor
@@ -34,6 +32,7 @@ public class Film extends Entity {
     private long duration;
     @Min(value = 0)
     private int rate;
+    @NotNull(message = "Рейтинг фильма не может быть пустой")
     private Mpa mpa;
 
     public Film(Integer id,
