@@ -8,6 +8,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 
 @Builder
 @AllArgsConstructor
@@ -32,13 +34,21 @@ public class Film extends Entity {
     private long duration;
     @Min(value = 0)
     private int rate;
+    private Map<String, Integer> mpa = new HashMap<>();
 
-    public Film(Integer id, String name, String description, LocalDate releaseDate, long duration, int rate) {
+    public Film(Integer id,
+                String name,
+                String description,
+                LocalDate releaseDate,
+                long duration,
+                int rate,
+                Map<String, Integer> mpa) {
         this.setId(id);
         this.name = name;
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
         this.rate = rate;
+        this.mpa = mpa;
     }
 }
