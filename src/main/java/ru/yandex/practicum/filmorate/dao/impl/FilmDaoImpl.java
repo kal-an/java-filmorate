@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.dao;
+package ru.yandex.practicum.filmorate.dao.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,13 +20,13 @@ import java.util.Collection;
 import java.util.Optional;
 
 @Repository
-public class FilmDbStorage implements FilmStorage {
+public class FilmDaoImpl implements FilmStorage {
 
     private final JdbcTemplate jdbcTemplate;
-    private final Logger log = LoggerFactory.getLogger(FilmDbStorage.class);
+    private final Logger log = LoggerFactory.getLogger(FilmDaoImpl.class);
 
     @Autowired
-    public FilmDbStorage(JdbcTemplate jdbcTemplate) {
+    public FilmDaoImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
