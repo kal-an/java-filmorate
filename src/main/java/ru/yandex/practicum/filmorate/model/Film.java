@@ -34,7 +34,7 @@ public class Film extends Entity {
     private long duration;
     @Min(value = 0)
     private int rate;
-    private Map<String, Integer> mpa = new HashMap<>();
+    private Mpa mpa;
 
     public Film(Integer id,
                 String name,
@@ -42,7 +42,7 @@ public class Film extends Entity {
                 LocalDate releaseDate,
                 long duration,
                 int rate,
-                Map<String, Integer> mpa) {
+                Mpa mpa) {
         this.setId(id);
         this.name = name;
         this.description = description;
