@@ -7,6 +7,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 @Builder
@@ -29,8 +30,8 @@ public class User extends Entity {
     @Past
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthday;
-    private Set<Integer> friends;
-    private Set<Integer> likedFilms;
+    private Set<Integer> friends = new HashSet<>();
+    private Set<Integer> likedFilms = new HashSet<>();
 
     public User(Integer id, String login, String name, String email, LocalDate birthday) {
         this.setId(id);
