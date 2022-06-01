@@ -28,7 +28,8 @@ CREATE TABLE IF NOT EXISTS film
     description  VARCHAR(200) NOT NULL,
     release_date DATE         NOT NULL,
     duration     LONG         NOT NULL,
-    rate         INTEGER
+    rate         INTEGER,
+    mpa          VARCHAR(10)  NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS liked_film
