@@ -4,25 +4,24 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.dao.FriendDao;
+import ru.yandex.practicum.filmorate.dao.UserDao;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class UserService {
 
     private final UserStorage storage;
-    private final FriendDao friendDao;
+    private final UserDao userDao;
 
     @Autowired
-    public UserService(@Qualifier("userDbStorage") UserStorage storage, FriendDao friendDao) {
+    public UserService(@Qualifier("userDaoImpl") UserStorage storage, UserDao userDao) {
         this.storage = storage;
-        this.friendDao = friendDao;
+        this.userDao = userDao;
     }
 
     public Optional<User> createUser(User user) {
@@ -50,41 +49,25 @@ public class UserService {
     public void addFriend(Integer id, Integer friendId) {
         final Optional<User> optionalUser = findUserById(id);
         final Optional<User> optionalFriend = findUserById(friendId);
-        if (optionalUser.isPresent()) {
-            final User user = optionalUser.get();
-            user.getFriends().add(friendId);
-            updateUser(user);
-        }
-        if (optionalFriend.isPresent()) {
-            final User friend = optionalFriend.get();
-            friend.getFriends().add(friendId);
-            updateUser(friend);
+        if (optionalUser.isPresent() && optionalFriend.isPresent()) {
+            userDao.deleteFriend(id, friendId);
+            log.info("Пользователь {} добавил друга {}", optionalUser.get(), optionalFriend.get());
         }
     }
 
     public void deleteFriend(Integer id, Integer friendId) {
         final Optional<User> optionalUser = findUserById(id);
         final Optional<User> optionalFriend = findUserById(friendId);
-        if (optionalUser.isPresent()) {
-            final User user = optionalUser.get();
-            user.getFriends().remove(friendId);
-            updateUser(user);
-        }
-        if (optionalFriend.isPresent()) {
-            final User friend = optionalFriend.get();
-            friend.getFriends().remove(id);
-            updateUser(friend);
+        if (optionalUser.isPresent() && optionalFriend.isPresent()) {
+            userDao.deleteFriend(id, friendId);
+            log.info("Пользователь {} удалил друга {}", optionalUser.get(), optionalFriend.get());
         }
     }
 
     public List<User> getUserFriends(Integer id) {
         final Optional<User> optionalUser = findUserById(id);
         if (optionalUser.isPresent()) {
-            return friendDao.getFriendsId(id).stream()
-                    .map(this::findUserById)
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .collect(Collectors.toList());
+            return userDao.getUserFriends(id);
         }
         return List.of();
     }
@@ -92,21 +75,10 @@ public class UserService {
     public List<User> getCommonFriends(Integer id, Integer otherId) {
         final Optional<User> optionalFirstUser = findUserById(id);
         final Optional<User> optionalSecondUser = findUserById(otherId);
-        Set<Integer> firstUserFriends = new HashSet<>();
-        Set<Integer> secondUserFriends = new HashSet<>();
-        if (optionalFirstUser.isPresent()) {
-            firstUserFriends = optionalFirstUser.get().getFriends();
+        if (optionalFirstUser.isPresent() && optionalSecondUser.isPresent()) {
+            return userDao.getCommonFriends(id, otherId);
         }
-        if (optionalSecondUser.isPresent()) {
-            secondUserFriends = optionalSecondUser.get().getFriends();
-        }
-        Set<Integer> commonFriendsId = new HashSet<>(firstUserFriends);
-        commonFriendsId.retainAll(secondUserFriends);
-        return commonFriendsId.stream()
-                .map(this::findUserById)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toList());
+        return List.of();
     }
 
 }
