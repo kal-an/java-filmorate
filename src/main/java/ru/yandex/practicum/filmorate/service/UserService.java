@@ -63,7 +63,7 @@ public class UserService {
         }
     }
 
-    public List<User> getUserFriends(Integer id) {
+    public Collection<User> getUserFriends(Integer id) {
         final Optional<User> optionalUser = findUserById(id);
         if (optionalUser.isPresent()) {
             return storage.getUserFriends(id);
@@ -71,7 +71,7 @@ public class UserService {
         return List.of();
     }
 
-    public List<User> getCommonFriends(Integer id, Integer otherId) {
+    public Collection<User> getCommonFriends(Integer id, Integer otherId) {
         final Optional<User> optionalFirstUser = findUserById(id);
         final Optional<User> optionalSecondUser = findUserById(otherId);
         if (optionalFirstUser.isPresent() && optionalSecondUser.isPresent()) {

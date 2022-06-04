@@ -125,7 +125,7 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public List<User> getUserFriends(Integer id) {
+    public Collection<User> getUserFriends(Integer id) {
         String sql = "SELECT f.friend_id AS user_id, u.login, u.name, u.email, u.birthday " +
                 "FROM friend AS f " +
                 "INNER JOIN user AS u ON f.friend_id = u.user_id " +
@@ -134,7 +134,7 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public List<User> getCommonFriends(Integer id, Integer otherId) {
+    public Collection<User> getCommonFriends(Integer id, Integer otherId) {
         String sql = "SELECT f.friend_id AS user_id, u.login, u.name, u.email, u.birthday " +
                 "    FROM friend AS f " +
                 "    INNER JOIN user AS u ON f.friend_id = u.user_id " +

@@ -46,7 +46,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public List<User> getUserFriends(Integer id) {
+    public Collection<User> getUserFriends(Integer id) {
         return users.get(id).getFriends().stream()
                 .map(this::getEntity)
                 .filter(Optional::isPresent)
@@ -55,7 +55,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public List<User> getCommonFriends(Integer id, Integer otherId) {
+    public Collection<User> getCommonFriends(Integer id, Integer otherId) {
         Optional<User> optionalUser = getEntity(id);
         Optional<User> optionalSecondUser = getEntity(otherId);
         if (optionalUser.isPresent() && optionalSecondUser.isPresent()) {

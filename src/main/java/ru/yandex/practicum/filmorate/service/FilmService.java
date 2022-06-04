@@ -10,7 +10,6 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -74,7 +73,7 @@ public class FilmService {
         }
     }
 
-    public List<Film> getPopularFilm(Integer size) {
+    public Collection<Film> getPopularFilm(Integer size) {
         return storage.getPopularFilm(size);
     }
 }

@@ -17,7 +17,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -59,7 +58,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public List<Film> getPopularFilm(Integer size) {
+    public Collection<Film> getPopularFilm(Integer size) {
         String sql = "SELECT f.film_id, f.name, f.description, f.release_date, f.duration, " +
                 "f.rate, m.mpa_id, m.name AS mpa_name, m.description AS mpa_description " +
                 "FROM film AS f " +
