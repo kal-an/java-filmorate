@@ -111,7 +111,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public void deleteLike(Integer userId, Integer filmId) {
-        String sql = "DELETE FROM liked_film WHERE user_id ? and film_id = ?";
+        String sql = "DELETE FROM liked_film WHERE user_id = ? and film_id = ?";
         jdbcTemplate.update(sql, userId, filmId);
     }
 
