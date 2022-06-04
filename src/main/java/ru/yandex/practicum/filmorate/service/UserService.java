@@ -4,24 +4,23 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.dao.UserDao;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
 public class UserService {
 
     private final UserStorage storage;
-    private final UserDao userDao;
 
     @Autowired
-    public UserService(@Qualifier("userDaoImpl") UserStorage storage, UserDao userDao) {
+    public UserService(@Qualifier("userDbStorage") UserStorage storage) {
         this.storage = storage;
-        this.userDao = userDao;
     }
 
     public Optional<User> createUser(User user) {
@@ -50,7 +49,7 @@ public class UserService {
         final Optional<User> optionalUser = findUserById(id);
         final Optional<User> optionalFriend = findUserById(friendId);
         if (optionalUser.isPresent() && optionalFriend.isPresent()) {
-            userDao.deleteFriend(id, friendId);
+            storage.addFriend(id, friendId);
             log.info("Пользователь {} добавил друга {}", optionalUser.get(), optionalFriend.get());
         }
     }
@@ -59,7 +58,7 @@ public class UserService {
         final Optional<User> optionalUser = findUserById(id);
         final Optional<User> optionalFriend = findUserById(friendId);
         if (optionalUser.isPresent() && optionalFriend.isPresent()) {
-            userDao.deleteFriend(id, friendId);
+            storage.deleteFriend(id, friendId);
             log.info("Пользователь {} удалил друга {}", optionalUser.get(), optionalFriend.get());
         }
     }
@@ -67,7 +66,7 @@ public class UserService {
     public List<User> getUserFriends(Integer id) {
         final Optional<User> optionalUser = findUserById(id);
         if (optionalUser.isPresent()) {
-            return userDao.getUserFriends(id);
+            return storage.getUserFriends(id);
         }
         return List.of();
     }
@@ -76,9 +75,16 @@ public class UserService {
         final Optional<User> optionalFirstUser = findUserById(id);
         final Optional<User> optionalSecondUser = findUserById(otherId);
         if (optionalFirstUser.isPresent() && optionalSecondUser.isPresent()) {
-            return userDao.getCommonFriends(id, otherId);
+            return storage.getCommonFriends(id, otherId);
         }
         return List.of();
     }
 
+    public void addLike(Integer userId, Integer filmId) {
+        storage.addLike(userId, filmId);
+    }
+
+    public void deleteLike(Integer userId, Integer filmId) {
+        storage.deleteLike(userId, filmId);
+    }
 }
