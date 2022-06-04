@@ -2,12 +2,11 @@ package ru.yandex.practicum.filmorate.storage.user;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -44,5 +43,52 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public void delete(Integer id) {
         users.remove(id);
+    }
+
+    @Override
+    public List<User> getUserFriends(Integer id) {
+        return users.get(id).getFriends().stream()
+                .map(this::getEntity)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<User> getCommonFriends(Integer id, Integer otherId) {
+        Optional<User> optionalUser = getEntity(id);
+        Optional<User> optionalSecondUser = getEntity(otherId);
+        if (optionalUser.isPresent() && optionalSecondUser.isPresent()) {
+            Set<Integer> firstUserFriends = optionalUser.get().getFriends();
+            Set<Integer> secondUserFriends = optionalSecondUser.get().getFriends();
+            Set<Integer> commonFriendsId = new HashSet<>(firstUserFriends);
+            commonFriendsId.retainAll(secondUserFriends);
+            return commonFriendsId.stream()
+                    .map(this::getEntity)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .collect(Collectors.toList());
+        }
+        return List.of();
+    }
+
+    @Override
+    public void deleteFriend(Integer id, Integer friendId) {
+        users.get(id).getFriends().remove(friendId);
+    }
+
+    @Override
+    public void addFriend(Integer id, Integer friendId) {
+        users.get(id).getFriends().add(friendId);
+    }
+
+    @Override
+    public void addLike(Integer userId, Integer filmId) {
+        users.get(userId).getLikedFilms().add(filmId);
+    }
+
+    @Override
+    public void deleteLike(Integer userId, Integer filmId) {
+        users.get(userId).getLikedFilms().remove(filmId);
     }
 }
