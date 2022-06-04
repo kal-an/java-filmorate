@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.dao.FilmDao;
 import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
@@ -19,14 +18,11 @@ import java.util.Optional;
 public class FilmService {
 
     private final FilmStorage storage;
-    private final FilmDao filmDao;
     private final UserService userService;
 
     @Autowired
-    public FilmService(@Qualifier("filmDaoImpl") FilmStorage storage,
-                       FilmDao filmDao, UserService userService) {
+    public FilmService(@Qualifier("filmDbStorage") FilmStorage storage, UserService userService) {
         this.storage = storage;
-        this.filmDao = filmDao;
         this.userService = userService;
     }
 
@@ -79,6 +75,6 @@ public class FilmService {
     }
 
     public List<Film> getPopularFilm(Integer size) {
-        return filmDao.getPopularFilm(size);
+        return storage.getPopularFilm(size);
     }
 }
