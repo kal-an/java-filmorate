@@ -29,6 +29,7 @@ public class UserService {
     }
 
     public Optional<User> updateUser(User user) {
+        findUserById(user.getId());
         log.info(String.format("Обновлен пользователь %s", user));
         return storage.update(user);
     }
