@@ -90,7 +90,7 @@ public class FilmDbStorage implements FilmStorage {
     public Optional<Film> update(Film entity) {
         String sql = "UPDATE film SET name = ?, description = ?, release_date = ?, duration = ?, rate = ?, mpa_id = ? " +
                 "WHERE film_id = ?";
-        jdbcTemplate.update(sql,
+        int count = jdbcTemplate.update(sql,
                 entity.getName(),
                 entity.getDescription(),
                 entity.getReleaseDate(),
@@ -106,7 +106,10 @@ public class FilmDbStorage implements FilmStorage {
                 entity.getDuration(),
                 entity.getRate(),
                 entity.getMpa());
-        return Optional.of(film);
+        if (count == 1) {
+            return Optional.of(film);
+        }
+        return Optional.empty();
     }
 
     @Override
