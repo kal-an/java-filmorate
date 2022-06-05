@@ -69,7 +69,7 @@ public class UserDbStorage implements UserStorage {
     @Override
     public Optional<User> update(User entity) {
         String sql = "UPDATE user SET login = ?, name = ?, email = ?, birthday = ? WHERE user_id = ?";
-        jdbcTemplate.update(sql,
+        int count = jdbcTemplate.update(sql,
                 entity.getLogin(),
                 entity.getName(),
                 entity.getEmail(),
@@ -81,7 +81,10 @@ public class UserDbStorage implements UserStorage {
                 entity.getName(),
                 entity.getEmail(),
                 entity.getBirthday());
-        return Optional.of(user);
+        if (count == 1) {
+            return Optional.of(user);
+        }
+        return Optional.empty();
     }
 
     @Override
