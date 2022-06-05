@@ -31,6 +31,7 @@ public class FilmService {
     }
 
     public Optional<Film> updateFilm(Film film) {
+        findFilmById(film.getId());
         log.info(String.format("Обновлен фильм %s", film));
         return storage.update(film);
     }
