@@ -63,7 +63,7 @@ public class FilmDbStorage implements FilmStorage {
                 "f.rate, m.mpa_id, m.name AS mpa_name, m.description AS mpa_description " +
                 "FROM film AS f " +
                 "INNER JOIN mpa AS m ON m.mpa_id = f.mpa_id " +
-                "ORDER BY release_date DESC LIMIT ?";
+                "ORDER BY f.rate DESC LIMIT ?";
         return jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), size);
     }
 
