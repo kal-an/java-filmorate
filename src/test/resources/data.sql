@@ -31,5 +31,9 @@ INSERT INTO film (name, description, release_date, duration, rate, mpa_id)
     VALUES ( 'labore nulla', 'Duis in consequat esse', '1979-04-17',  '100', '4', '1');
 INSERT INTO film (name, description, release_date, duration, rate, mpa_id)
     VALUES ( 'New film', 'New film about friends', '1999-04-30', '120', '4', '3');
+INSERT INTO film (name, description, release_date, duration, rate, mpa_id)
+    VALUES ( 'New film 2', 'New film about friends', '1999-04-30', '120', '10', '3');
 
 INSERT INTO liked_film (USER_ID, FILM_ID) VALUES ( '1', '2' );
+INSERT INTO liked_film (USER_ID, FILM_ID) VALUES ( '1', '3' );
+INSERT INTO liked_film (USER_ID, FILM_ID) VALUES ( '2', '3' );
