@@ -116,11 +116,8 @@ class FilmDbStorageTests {
     @Test
     @DisplayName("Получить популярные фильмы")
     public void testGetPopularFilms() {
-        Mpa mpa = new Mpa(1, "MPA", "MPA Category");
-        Film film = new Film(null, "Superman", "Film about Superman",
-                LocalDate.now(), 120, 10, mpa);
-        filmStorage.create(film);
         Collection<Film> films = filmStorage.getPopularFilm(1);
-        assertThat(films).hasSize(1).flatMap(Film::getRate).isSubsetOf(10);
+        assertThat(films).hasSize(1);
+        assertEquals(films.stream().findFirst().get().getId(), 3);
     }
 }
