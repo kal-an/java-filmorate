@@ -59,11 +59,13 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Collection<Film> getPopularFilm(Integer size) {
-        String sql = "SELECT f.film_id, f.name, f.description, f.release_date, f.duration, " +
-                "f.rate, m.mpa_id, m.name AS mpa_name, m.description AS mpa_description " +
-                "FROM film AS f " +
+        String sql = "SELECT f.film_id, f.name, f.description, f.release_date, f.duration, f.rate, " +
+                "m.mpa_id, m.name AS mpa_name, m.description AS mpa_description, COUNT(lf.film_id) AS likes " +
+                "FROM liked_film AS lf " +
+                "INNER JOIN film F ON f.film_id = lf.film_id " +
                 "INNER JOIN mpa AS m ON m.mpa_id = f.mpa_id " +
-                "ORDER BY f.rate DESC LIMIT ?";
+                "GROUP BY lf.film_id " +
+                "ORDER BY likes DESC LIMIT ?";
         return jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), size);
     }
 
