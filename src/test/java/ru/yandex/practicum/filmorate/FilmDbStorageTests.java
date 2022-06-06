@@ -38,7 +38,7 @@ class FilmDbStorageTests {
         assertThat(createdFilm)
                 .isPresent()
                 .hasValueSatisfying(usr ->
-                        assertThat(usr).hasFieldOrPropertyWithValue("id", 3)
+                        assertThat(usr).hasFieldOrPropertyWithValue("id", 4)
                 )
                 .hasValueSatisfying(usr ->
                         assertThat(usr).hasFieldOrPropertyWithValue("name", film.getName())
@@ -57,7 +57,7 @@ class FilmDbStorageTests {
     @DisplayName("Получить все фильмы")
     public void testGetAllFilms() {
         Collection<Film> films = filmStorage.getEntities();
-        assertThat(films).hasSize(2);
+        assertThat(films).hasSize(3);
     }
 
     @Test
@@ -110,7 +110,7 @@ class FilmDbStorageTests {
     public void testDeleteFilmById() {
         filmStorage.delete(1);
         Collection<Film> films = filmStorage.getEntities();
-        assertThat(films).hasSize(1);
+        assertThat(films).hasSize(2);
     }
 
     @Test
@@ -118,6 +118,6 @@ class FilmDbStorageTests {
     public void testGetPopularFilms() {
         Collection<Film> films = filmStorage.getPopularFilm(1);
         assertThat(films).hasSize(1);
-        assertEquals(films.stream().findFirst().get().getId(), 3);
+        assertEquals(films.stream().findFirst().get().getId(), 1);
     }
 }
