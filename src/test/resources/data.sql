@@ -37,3 +37,6 @@ INSERT INTO film (name, description, release_date, duration, rate, mpa_id)
 INSERT INTO liked_film (USER_ID, FILM_ID) VALUES ( '1', '2' );
 INSERT INTO liked_film (USER_ID, FILM_ID) VALUES ( '1', '3' );
 INSERT INTO liked_film (USER_ID, FILM_ID) VALUES ( '2', '3' );
+
+INSERT INTO genre_film (genre_id, film_id) VALUES ( '1', '3');
+INSERT INTO genre_film (genre_id, film_id) VALUES ( '1', '2');
