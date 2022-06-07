@@ -10,6 +10,7 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 
 import java.sql.Date;
@@ -137,14 +138,20 @@ public class FilmDbStorage implements FilmStorage {
         String mpa_name = rs.getString("mpa_name");
         String mpa_description = rs.getString("mpa_description");
         Mpa mpa = new Mpa(mpa_id, mpa_name, mpa_description);
-        Set<Integer> genre = makeGenre(id);
+        Set<Genre> genre = getFilmGenres(id);
         return new Film(id, name, description, releaseDate, duration, rate, mpa, genre);
     }
 
-    private Set<Integer> makeGenre(Integer filmId) {
-        String sql = "SELECT g.genre_id FROM genre AS g " +
+    private Set<Genre> getFilmGenres(Integer filmId) {
+        String sql = "SELECT g.genre_id, g.name FROM genre AS g " +
                 "INNER JOIN genre_film AS gf ON gf.genre_id = g.genre_id " +
                 "WHERE film_id = ?";
-        return new HashSet<>(jdbcTemplate.query(sql, (rs, rowNum) -> (rs.getInt("genre_id")), filmId));
+        return new HashSet<>(jdbcTemplate.query(sql, (rs, rowNum) -> makeGenre(rs), filmId));
+    }
+
+    private Genre makeGenre(ResultSet rs) throws SQLException {
+        Integer id = rs.getInt("genre_id");
+        String name = rs.getString("name");
+        return new Genre(id, name);
     }
 }
