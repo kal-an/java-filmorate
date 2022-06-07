@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -17,7 +18,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Repository
 public class FilmDbStorage implements FilmStorage {
@@ -108,7 +112,8 @@ public class FilmDbStorage implements FilmStorage {
                 entity.getReleaseDate(),
                 entity.getDuration(),
                 entity.getRate(),
-                entity.getMpa());
+                entity.getMpa(),
+                entity.getGenre());
         if (count == 1) {
             return Optional.of(film);
         }
@@ -132,6 +137,14 @@ public class FilmDbStorage implements FilmStorage {
         String mpa_name = rs.getString("mpa_name");
         String mpa_description = rs.getString("mpa_description");
         Mpa mpa = new Mpa(mpa_id, mpa_name, mpa_description);
-        return new Film(id, name, description, releaseDate, duration, rate, mpa);
+        Set<Integer> genre = makeGenre(id);
+        return new Film(id, name, description, releaseDate, duration, rate, mpa, genre);
+    }
+
+    private Set<Integer> makeGenre(Integer filmId) {
+        String sql = "SELECT g.genre_id FROM genre AS g " +
+                "INNER JOIN genre_film AS gf ON gf.genre_id = g.genre_id " +
+                "WHERE film_id = ?";
+        return new HashSet<>(jdbcTemplate.query(sql, (rs, rowNum) -> (rs.getInt("genre_id")), filmId));
     }
 }
