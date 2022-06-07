@@ -34,7 +34,7 @@ public class Film extends Entity {
     @Min(value = 0)
     private int rate;
     private Mpa mpa;
-    private Set<Integer> genre;
+    private Set<Genre> genre;
 
     public Film(Integer id,
                 String name,
@@ -43,7 +43,7 @@ public class Film extends Entity {
                 long duration,
                 int rate,
                 Mpa mpa,
-                Set<Integer> genre) {
+                Set<Genre> genre) {
         this.setId(id);
         this.name = name;
         this.description = description;
