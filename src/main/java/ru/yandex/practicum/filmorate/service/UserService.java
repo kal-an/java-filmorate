@@ -2,16 +2,15 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -20,86 +19,73 @@ public class UserService {
     private final UserStorage storage;
 
     @Autowired
-    public UserService(UserStorage storage) {
+    public UserService(@Qualifier("userDbStorage") UserStorage storage) {
         this.storage = storage;
     }
 
-    public void createUser(User user) {
-        storage.create(user);
+    public Optional<User> createUser(User user) {
         log.info(String.format("Добавлен пользователь %s", user));
+        return storage.create(user);
     }
 
-    public User updateUser(User user) {
-        storage.update(user);
+    public Optional<User> updateUser(User user) {
+        findUserById(user.getId());
         log.info(String.format("Обновлен пользователь %s", user));
-        return user;
+        return storage.update(user);
     }
 
     public Collection<User> getAllUsers() {
         return storage.getEntities();
     }
 
-    public User findUserById(Integer id) {
-        final User user = storage.getEntity(id);
-        if (user == null) {
+    public Optional<User> findUserById(Integer id) {
+        final Optional<User> optionalUser = storage.getEntity(id);
+        if (optionalUser.isEmpty()) {
             throw new UserNotFoundException(String.format("Пользователь c ID %s не найден", id));
         }
         return storage.getEntity(id);
     }
 
     public void addFriend(Integer id, Integer friendId) {
-        final User user = findUserById(id);
-        final User friend = findUserById(friendId);
-        if (user.getFriends() == null) {
-            user.setFriends(new HashSet<>());
-            log.info(String.format("Пользователь %s без друзей", user));
+        final Optional<User> optionalUser = findUserById(id);
+        final Optional<User> optionalFriend = findUserById(friendId);
+        if (optionalUser.isPresent() && optionalFriend.isPresent()) {
+            storage.addFriend(id, friendId);
+            log.info("Пользователь {} добавил друга {}", optionalUser.get(), optionalFriend.get());
         }
-        if (friend.getFriends() == null) {
-            friend.setFriends(new HashSet<>());
-            log.info(String.format("Пользователь %s без друзей", friend));
-        }
-        user.getFriends().add(friendId);
-        friend.getFriends().add(id);
-        updateUser(user);
-        updateUser(friend);
-        log.info(String.format("К пользователю %s, добавлен друг с ID %s", user, friendId));
     }
 
     public void deleteFriend(Integer id, Integer friendId) {
-        final User user = findUserById(id);
-        final User friend = findUserById(friendId);
-        if (user.getFriends() == null) {
-            user.setFriends(new HashSet<>());
-            log.info(String.format("Пользователь %s без друзей", user));
+        final Optional<User> optionalUser = findUserById(id);
+        final Optional<User> optionalFriend = findUserById(friendId);
+        if (optionalUser.isPresent() && optionalFriend.isPresent()) {
+            storage.deleteFriend(id, friendId);
+            log.info("Пользователь {} удалил друга {}", optionalUser.get(), optionalFriend.get());
         }
-        if (friend.getFriends() == null) {
-            friend.setFriends(new HashSet<>());
-            log.info(String.format("Пользователь %s без друзей", friend));
+    }
+
+    public Collection<User> getUserFriends(Integer id) {
+        final Optional<User> optionalUser = findUserById(id);
+        if (optionalUser.isPresent()) {
+            return storage.getUserFriends(id);
         }
-        user.getFriends().remove(friendId);
-        friend.getFriends().remove(id);
-        updateUser(user);
-        updateUser(friend);
-        log.info(String.format("У пользователя %s, удален друг с ID %s", user, friendId));
+        return List.of();
     }
 
-    public List<User> getUserFriends(Integer id) {
-        final User user = findUserById(id);
-        return user.getFriends().stream()
-                .map(this::findUserById)
-                .collect(Collectors.toList());
+    public Collection<User> getCommonFriends(Integer id, Integer otherId) {
+        final Optional<User> optionalFirstUser = findUserById(id);
+        final Optional<User> optionalSecondUser = findUserById(otherId);
+        if (optionalFirstUser.isPresent() && optionalSecondUser.isPresent()) {
+            return storage.getCommonFriends(id, otherId);
+        }
+        return List.of();
     }
 
-    public List<User> getCommonFriends(Integer id, Integer otherId) {
-        User firstUser = findUserById(id);
-        User secondUser = findUserById(otherId);
-        Set<Integer> firstUserFriends = firstUser.getFriends();
-        Set<Integer> secondUserFriends = secondUser.getFriends();
-        Set<Integer> commonFriendsId = new HashSet<>(firstUserFriends);
-        commonFriendsId.retainAll(secondUserFriends);
-        return commonFriendsId.stream()
-                .map(this::findUserById)
-                .collect(Collectors.toList());
+    public void addLike(Integer userId, Integer filmId) {
+        storage.addLike(userId, filmId);
     }
 
+    public void deleteLike(Integer userId, Integer filmId) {
+        storage.deleteLike(userId, filmId);
+    }
 }

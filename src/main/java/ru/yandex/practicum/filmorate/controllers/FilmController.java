@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
 import java.util.Collection;
+import java.util.Optional;
 
 @RestController
 @Slf4j
@@ -24,22 +25,20 @@ public class FilmController extends EntityController<Film> {
 
     @PostMapping("/films")
     @Override
-    public Film create(@Valid @RequestBody Film film) {
+    public Optional<Film> create(@Valid @RequestBody Film film) {
         super.create(film);
-        service.createFilm(film);
-        return film;
+        return service.createFilm(film);
     }
 
     @PutMapping("/films")
     @Override
-    public Film update(@Valid @RequestBody Film film) {
+    public Optional<Film> update(@Valid @RequestBody Film film) {
         super.update(film);
-        if (service.findFilmById(film.getId()) == null) {
+        if (service.findFilmById(film.getId()).isEmpty()) {
             log.error(film.toString());
             throw new InvalidEntityException("Идентификатор некорректен");
         }
-        service.updateFilm(film);
-        return film;
+        return  service.updateFilm(film);
     }
 
     @GetMapping("/films")
@@ -48,7 +47,7 @@ public class FilmController extends EntityController<Film> {
     }
 
     @GetMapping("/films/{id}")
-    public Film getFilmById(@PathVariable int id) {
+    public Optional<Film> getFilmById(@PathVariable int id) {
         return service.findFilmById(id);
     }
 

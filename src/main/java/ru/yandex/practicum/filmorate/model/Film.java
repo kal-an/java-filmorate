@@ -8,9 +8,11 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @ToString
@@ -31,4 +33,24 @@ public class Film extends Entity {
     private long duration;
     @Min(value = 0)
     private int rate;
+    private Mpa mpa;
+    private Set<Genre> genre;
+
+    public Film(Integer id,
+                String name,
+                String description,
+                LocalDate releaseDate,
+                long duration,
+                int rate,
+                Mpa mpa,
+                Set<Genre> genre) {
+        this.setId(id);
+        this.name = name;
+        this.description = description;
+        this.releaseDate = releaseDate;
+        this.duration = duration;
+        this.rate = rate;
+        this.mpa = mpa;
+        this.genre = genre;
+    }
 }

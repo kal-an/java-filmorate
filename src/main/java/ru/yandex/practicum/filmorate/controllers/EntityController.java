@@ -9,23 +9,24 @@ import javax.validation.Valid;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 abstract class EntityController<T extends Entity> {
 
-    public T create(@Valid @RequestBody T entity) {
+    public Optional<T> create(@Valid @RequestBody T entity) {
         if (entity.getId() != null) {
             log.error(entity.toString());
             throw new InvalidEntityException("Идентификатор должен быть пустым");
         }
-        return entity;
+        return Optional.of(entity);
     }
 
-    public T update(@Valid @RequestBody T entity) {
+    public Optional<T> update(@Valid @RequestBody T entity) {
         if (entity.getId() == null) {
             log.error(entity.toString());
             throw new InvalidEntityException("Идентификатор не может быть пустым");
         }
-        return entity;
+        return Optional.of(entity);
     }
 }
