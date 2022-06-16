@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.controllers;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.IncorrectParameterException;
 import ru.yandex.practicum.filmorate.exceptions.InvalidEntityException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -25,20 +26,20 @@ public class FilmController extends EntityController<Film> {
 
     @PostMapping("/films")
     @Override
-    public Optional<Film> create(@Valid @RequestBody Film film) {
+    public Film create(@Valid @RequestBody Film film) {
         super.create(film);
-        return service.createFilm(film);
+        return service.createFilm(film).orElseThrow(() -> new FilmNotFoundException(film.toString()));
     }
 
     @PutMapping("/films")
     @Override
-    public Optional<Film> update(@Valid @RequestBody Film film) {
+    public Film update(@Valid @RequestBody Film film) {
         super.update(film);
         if (service.findFilmById(film.getId()).isEmpty()) {
             log.error(film.toString());
             throw new InvalidEntityException("Идентификатор некорректен");
         }
-        return  service.updateFilm(film);
+        return service.updateFilm(film).orElseThrow(() -> new FilmNotFoundException(film.toString()));
     }
 
     @GetMapping("/films")
@@ -47,8 +48,8 @@ public class FilmController extends EntityController<Film> {
     }
 
     @GetMapping("/films/{id}")
-    public Optional<Film> getFilmById(@PathVariable int id) {
-        return service.findFilmById(id);
+    public Film getFilmById(@PathVariable int id) {
+        return service.findFilmById(id).orElseThrow(() -> new FilmNotFoundException(String.valueOf(id)));
     }
 
     @PutMapping("/films/{id}/like/{userId}")

@@ -14,19 +14,19 @@ import java.util.Optional;
 @Slf4j
 abstract class EntityController<T extends Entity> {
 
-    public Optional<T> create(@Valid @RequestBody T entity) {
+    public T create(@Valid @RequestBody T entity) {
         if (entity.getId() != null) {
             log.error(entity.toString());
             throw new InvalidEntityException("Идентификатор должен быть пустым");
         }
-        return Optional.of(entity);
+        return entity;
     }
 
-    public Optional<T> update(@Valid @RequestBody T entity) {
+    public T update(@Valid @RequestBody T entity) {
         if (entity.getId() == null) {
             log.error(entity.toString());
             throw new InvalidEntityException("Идентификатор не может быть пустым");
         }
-        return Optional.of(entity);
+        return entity;
     }
 }

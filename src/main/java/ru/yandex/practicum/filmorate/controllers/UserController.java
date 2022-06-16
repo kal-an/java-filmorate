@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.InvalidEntityException;
+import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
@@ -26,18 +27,18 @@ public class UserController extends EntityController<User> {
 
     @PostMapping("/users")
     @Override
-    public Optional<User> create(@Valid @RequestBody User user) {
+    public User create(@Valid @RequestBody User user) {
         if (user.getName() == null || user.getName().isBlank()) {
             log.info(user.toString());
             user.setName(user.getLogin());
         }
         super.create(user);
-        return service.createUser(user);
+        return service.createUser(user).orElseThrow(() -> new UserNotFoundException(user.toString()));
     }
 
     @PutMapping("/users")
     @Override
-    public Optional<User> update(@Valid @RequestBody User user) {
+    public User update(@Valid @RequestBody User user) {
         super.update(user);
         if (user.getName() == null || user.getName().isBlank()) {
             log.info(user.toString());
@@ -47,7 +48,7 @@ public class UserController extends EntityController<User> {
             log.error(user.toString());
             throw new InvalidEntityException("Идентификатор некорректен");
         }
-        return service.updateUser(user);
+        return service.updateUser(user).orElseThrow(() -> new UserNotFoundException(user.toString()));
     }
 
     @GetMapping("/users")
@@ -56,8 +57,8 @@ public class UserController extends EntityController<User> {
     }
 
     @GetMapping("/users/{id}")
-    public Optional<User> getUserById(@PathVariable int id) {
-        return service.findUserById(id);
+    public User getUserById(@PathVariable int id) {
+        return service.findUserById(id).orElseThrow(() -> new UserNotFoundException(String.valueOf(id)));
     }
 
     @PutMapping("/users/{id}/friends/{friendId}")
