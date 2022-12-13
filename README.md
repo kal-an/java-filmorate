@@ -1,61 +1,91 @@
-# Filmorate
+# Filmorate :film_strip:
+
 ### Проект:
-<p>Приложение для работы с фильмами и оценками пользователей.</p>
+<p>REST Приложение для работы с фильмами и оценками пользователей.</p>
+
+---
+Фильмов очень много, с разными рейтингами и как же выбрать, какой посмотреть — воспользоваться сервисом !
 
 ---
 ### Возможности приложения:
 1. добавление фильма;
+```http request
+POST /films
+```
 2. обновление фильма;
-3. получение всех фильмов;
-4. создание пользователя;
-5. обновление пользователя;
-6. получение списка всех пользователей;
-7. добавлять в друзья;
-8. оценивать фильмы;
-9. сохранение состояния данных после перезапуска.
+```http request
+PUT /films
+```
+3. получение фильма по идентификатору;
+```http request
+GET /films
+```
+4. получение популярных фильмов;
+```http request
+GET /films/popular
+```
+5. оценить фильм;
+```http request
+PUT /films/{id}/like/{userId}
+```
+6. создание пользователя;
+```http request
+POST /users
+```
+7. обновление пользователя;
+```http request
+PUT /users
+```
+8. получение списка всех пользователей;
+```http request
+GET /users
+```
+9. получить пользователя по идентификатору;
+```http request
+GET /users/{id}
+```
+10. добавление в друзья;
+```http request
+PUT /users/{id}/friends/{friendId}
+```
+### Схема базы данных
+![  Filmorate DB](/db/Filmorate.png)
 
-## Описание базы-данных
-![Filmorate DB](/db/Filmorate.png)
-1. Получение всех фильмов 
+
+---
+### Стек технологий
++ [Java](https://www.java.com/)
++ [Spring Boot](https://spring.io/projects/spring-boot)
++ [H2 Database](https://www.h2database.com/html/main.html)
++ [JdbcTemplate](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/jdbc/core/JdbcTemplate.html)
++ [Apache Maven](https://maven.apache.org)
++ [Project Lombok](https://projectlombok.org)
++ [JUnit](https://junit.org/)
++ [Postman](https://www.postman.com)
++ [IntelliJ IDEA](https://www.jetbrains.com/ru-ru/idea/)
+---
+### Запуск приложения
+Потребуется Java 11, Git, Apache Maven
+
+1. Склонировать
+```shell
+git clone https://github.com/kal-an/java-filmorate
 ```
-"SELECT f.film_id, f.name, f.description, f.release_date, f.duration, " +
-                "f.rate, m.mpa_id, m.name AS mpa_name, m.description AS mpa_description " +
-                "FROM film AS f " +
-                "INNER JOIN mpa AS m ON m.mpa_id = f.mpa_id"
+2. Собрать проект
+```shell
+mvn clean package
 ```
-2. Получение фильма по ID
+3. Запустить используя IDE, либо терминал
+```shell
+java -jar ./target/filmorate-0.0.1-SNAPSHOT.jar
 ```
-"SELECT f.film_id, f.name, f.description, f.release_date, f.duration, " +
-                "f.rate, m.mpa_id, m.name AS mpa_name, m.description AS mpa_description " +
-                "FROM film AS f " +
-                "INNER JOIN mpa AS m ON m.mpa_id = f.mpa_id " +
-                "WHERE film_id = '1'"
+---
+### Выполнение тестирования
+Подготовлены модульные тесты. Для запуска выполнить старт из среды разработки
+```shell
+src/test/java/ru/yandex/practicum/filmorate
 ```
-3. Получение всех пользователей
-```
-"SELECT user_id, login, name, email, birthday FROM user"
-```
-4. Получение пользователя по ID
-```
-"SELECT user_id, login, name, email, birthday " +
-                "FROM user WHERE user_id = ?"
-```
-5. Получение списка друзей
-```
-"SELECT f.friend_id AS user_id, u.login, u.name, u.email, u.birthday " +
-                "FROM friend AS f " +
-                "INNER JOIN user AS u ON f.friend_id = u.user_id " +
-                "WHERE f.user_id = ?"
-```
-6. Получение списка общий друзей с другим пользователем
-```
-"SELECT f.friend_id AS user_id, u.login, u.name, u.email, u.birthday " +
-                "    FROM friend AS f " +
-                "    INNER JOIN user AS u ON f.friend_id = u.user_id " +
-                "    WHERE f.user_id = ? " +
-                "INTERSECT " +
-                "SELECT f.friend_id AS user_id, u.login, u.name, u.email, u.birthday " +
-                "    FROM friend AS f " +
-                "    INNER JOIN user AS u ON f.friend_id = u.user_id " +
-                "    WHERE f.user_id = ?"
+Также подготовлены коллекции тестов, используя Postman
+```shell
+postman/sprint.json
 ```
